@@ -225,20 +225,7 @@ export default function Catalog({ cartItems, setCartItems, onCartOpen }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white px-6 py-12 md:px-12 relative">
 
-      {/* Header Section */}
-      <div className="max-w-7xl mx-auto flex justify-between items-center border-b border-neutral-800 pb-6 mb-12">
-        <div className="flex items-center gap-2 cursor-pointer">
-          <span className="text-xl font-light tracking-widest">Maison <span className="text-[#c1a055] italic font-normal">Lumière</span></span>
-        </div>
-        {/* Dynamic Cart Number Count */}
-        <div
-          className="text-sm tracking-widest text-neutral-400 uppercase cursor-pointer hover:text-[#c1a055] transition-colors"
-          onClick={onCartOpen}
-        >
-          Cart ({cartItems.length})
-        </div>
-      </div>
-
+    
       {/* Title */}
       <div className="text-center mb-16">
         <p className="text-[#c1a055] text-xs tracking-widest uppercase mb-2">Maison Lumière — Collections</p>
