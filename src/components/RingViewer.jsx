@@ -9,67 +9,85 @@ import {
 import * as THREE from "three";
 import useRingStore from "../store/useRingStore";
 
-/* PRELOAD MODEL */
+
 useGLTF.preload("/models/chapelhills_monahan.glb");
 
-/* PREMIUM METAL MATERIALS */
+
 const METAL_MATERIALS = {
   "14k White Gold": new THREE.MeshStandardMaterial({
     color: "#d9d9d9",
     metalness: 1,
-    roughness: 0.15,
+    roughness: 0.12,
     envMapIntensity: 5,
   }),
 
   "18k White Gold": new THREE.MeshStandardMaterial({
     color: "#f0f0f0",
     metalness: 1,
-    roughness: 0.12,
+    roughness: 0.1,
     envMapIntensity: 5,
   }),
 
   "14k Yellow Gold": new THREE.MeshStandardMaterial({
     color: "#dfba54",
     metalness: 1,
-    roughness: 0.14,
+    roughness: 0.12,
     envMapIntensity: 5,
   }),
 
   "18k Yellow Gold": new THREE.MeshStandardMaterial({
     color: "#f1c94a",
     metalness: 1,
-    roughness: 0.12,
+    roughness: 0.1,
     envMapIntensity: 5,
   }),
 
   "14k Rose Gold": new THREE.MeshStandardMaterial({
     color: "#E5A493",
     metalness: 1,
-    roughness: 0.14,
+    roughness: 0.12,
     envMapIntensity: 5,
   }),
 
   "18k Rose Gold": new THREE.MeshStandardMaterial({
     color: "#dca993",
     metalness: 1,
-    roughness: 0.12,
+    roughness: 0.1,
     envMapIntensity: 5,
   }),
 
   "Pure Platinum": new THREE.MeshStandardMaterial({
     color: "#cfcfcf",
     metalness: 1,
-    roughness: 0.08,
+    roughness: 0.06,
     envMapIntensity: 6,
   }),
 
   "Palladium Gray": new THREE.MeshStandardMaterial({
     color: "#bdbdbd",
     metalness: 1,
-    roughness: 0.1,
+    roughness: 0.08,
     envMapIntensity: 5,
   }),
 };
+
+
+const solidDiamondMaterial = new THREE.MeshPhysicalMaterial({
+  color: "#ffffff",
+  roughness: 0.0,            
+  metalness: 0.0,           
+  ior: 2.417,                
+  transmission: 0.98,       
+  thickness: 2.5,            
+  opacity: 1.0,
+  transparent: true,
+  envMapIntensity: 22,       
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.0,
+  side: THREE.DoubleSide,    
+  dispersion: 7.0,           
+  bounces: 4,                
+});
 
 function RingModel({ metal, stone, isMobile }) {
   const { scene } = useGLTF("/models/chapelhills_monahan.glb");
@@ -83,17 +101,18 @@ function RingModel({ metal, stone, isMobile }) {
       if (!obj.isMesh) return;
 
       obj.frustumCulled = false;
+      if (obj.geometry) {
+        obj.geometry.computeVertexNormals();
+      }
 
       const name = obj.name.toLowerCase();
 
-      /* 💎 MAIN DIAMOND */
+     
       if (name.includes("diamond_round_12_material_1_0")) {
-
         obj.rotation.set(0, 0, 0);
 
-        /* 💍 STONE SHAPE */
+        
         switch (stone?.toLowerCase()) {
-
           case "oval":
             obj.scale.set(0.75, 1.05, 1);
             break;
@@ -115,39 +134,35 @@ function RingModel({ metal, stone, isMobile }) {
             obj.scale.set(0.9, 0.9, 1);
         }
 
-        /* ✅ PERFECT TOP CENTER POSITION */
         obj.position.set(0, 0.12, 0);
-
-        /* 💎 DIAMOND MATERIAL */
-        obj.material = new THREE.MeshPhysicalMaterial({
-          color: "#ffffff",
-          transmission: 1,
-          roughness: 0,
-          metalness: 0,
-          ior: 2.417,
-          thickness: 1.5,
-          envMapIntensity: 18,
-          clearcoat: 1,
-          clearcoatRoughness: 0,
-          reflectivity: 1,
-        });
-
+        obj.material = solidDiamondMaterial;
+        obj.visible = true;
         return;
       }
 
-      /* 💍 METAL MATERIAL */
+      
+      if (
+        name.includes("diamond_round_material_1_0") || 
+        name.includes("diamond_round_13_material_1_0") || 
+        name.includes("diamond") || 
+        name.includes("gem") || 
+        name.includes("stone")
+      ) {
+        obj.material = solidDiamondMaterial;
+        obj.visible = true; 
+        return;
+      }
+
+    
       obj.material = metalMaterial;
     });
 
   }, [metal, stone, scene]);
 
-  /* 📐 PERFECT CENTER */
+ 
   useEffect(() => {
-
     const box = new THREE.Box3().setFromObject(scene);
-
     const center = new THREE.Vector3();
-
     box.getCenter(center);
 
     scene.position.set(
@@ -156,9 +171,8 @@ function RingModel({ metal, stone, isMobile }) {
       -center.z
     );
 
-    /* 🔥 PERFECT SIZE */
+   
     const scale = isMobile ? 27 : 41;
-
     scene.scale.set(scale, scale, scale);
 
   }, [scene, isMobile]);
@@ -171,80 +185,82 @@ function RingModel({ metal, stone, isMobile }) {
 }
 
 export default function RingViewer() {
-
   const { metal, stone } = useRingStore();
-
   const controlsRef = useRef();
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
     checkMobile();
-
     window.addEventListener("resize", checkMobile);
 
     return () =>
       window.removeEventListener("resize", checkMobile);
-
   }, []);
 
   return (
     <div className="w-full h-full">
-
       <Canvas
         gl={{
           antialias: true,
           preserveDrawingBuffer: true,
+          toneMapping: THREE.ACESFilmicToneMapping, 
         }}
         camera={{
           position: [0, 0, 2.2],
           fov: 45,
         }}
       >
-
         <color attach="background" args={["#050505"]} />
 
-        {/* 💡 LIGHTS */}
-        <ambientLight intensity={2.5} />
+        
+        <ambientLight intensity={1.2} />
 
+       
         <directionalLight
-          position={[10, 10, 10]}
-          intensity={6}
+          position={[8, 12, 6]} 
+          intensity={9}          
         />
 
+        
         <directionalLight
-          position={[-10, 10, 5]}
-          intensity={4}
-        />
-
-        <pointLight
-          position={[0, 5, 5]}
+          position={[-6, 8, -4]} 
           intensity={3}
         />
 
+       
+        <pointLight
+          position={[0, 2, 8]}
+          intensity={2}
+          distance={20}
+          decay={2}
+        />
+
+      
+        <pointLight
+          position={[4, 6, 4]}
+          intensity={6}
+          distance={15}
+          decay={1}
+        />
+
         <Suspense fallback={null}>
-
-          <Environment preset="city" />
-
+         
+          <Environment preset="studio" />
           <Float
             speed={0.8}
             rotationIntensity={0.05}
             floatIntensity={0.03}
           >
-
             <RingModel
               metal={metal}
               stone={stone}
               isMobile={isMobile}
             />
-
           </Float>
-
         </Suspense>
 
         <OrbitControls
@@ -256,9 +272,7 @@ export default function RingViewer() {
           target={[0, 0, 0]}
           rotateSpeed={isMobile ? 0.7 : 0.45}
         />
-
       </Canvas>
-
     </div>
   );
 }
