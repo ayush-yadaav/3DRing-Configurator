@@ -89,7 +89,7 @@ export default function App() {
     loadProducts();
   }, []);
 
-  
+
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("ring-cart")) || [];
     setCartItems(savedCart);
@@ -102,30 +102,30 @@ export default function App() {
     localStorage.setItem("ring-cart", JSON.stringify(updated));
   };
 
-  
+
 
   return (
     <main className="bg-[#050505] text-white overflow-x-hidden">
 
-     
+
       <Navbar
         cartItemsCount={cartItems.length}
         onCartOpen={() => setCartOpen(true)}
         ease={EASE}
       />
 
-     
+
       <Hero product={product} ease={EASE} />
 
 
 
-     
+
       <section className="relative min-h-screen bg-[#050505] overflow-hidden">
 
-        
+
         <div className="absolute inset-0 bg-[#050505]" />
 
-       
+
         <div
           className="
       absolute
@@ -145,7 +145,7 @@ export default function App() {
     "
         />
 
-        
+
         <div
           className="
       relative
@@ -175,11 +175,11 @@ export default function App() {
     relative
 
     w-full
-    lg:w-[58%]
+    lg:w-[65%]
 
-    h-[55vh]
-    md:h-[70vh]
-    lg:h-screen
+   h-[70vh]
+md:h-[85vh]
+lg:h-screen
 
     flex
     items-center
@@ -189,7 +189,7 @@ export default function App() {
   "
           >
 
-            
+
             <div
               className="
       absolute
@@ -228,7 +228,7 @@ export default function App() {
 
           </div>
 
-       
+
           <div
             className="
         relative
@@ -254,7 +254,7 @@ export default function App() {
 
         </div>
 
-       
+
         <div
           className="
       pointer-events-none
@@ -270,7 +270,7 @@ export default function App() {
           }}
         />
 
-       
+
         <div
           className="
       md:hidden
@@ -306,7 +306,7 @@ export default function App() {
       </section>
 
 
-      
+
       <CartDrawer
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}

@@ -1,1855 +1,246 @@
-
-// import { Suspense, useEffect, useRef, useState } from "react";
-
-// import { Canvas } from "@react-three/fiber";
-
-// import {
-//   Environment,
-//   useGLTF,
-//   OrbitControls,
-//   Float,
-// } from "@react-three/drei";
-
-// import * as THREE from "three";
-
-// import useRingStore from "../store/useRingStore";
-
-// useGLTF.preload("/models/ring.glb");
-
-// /* MATERIALS */
-// const METAL_MATERIALS = {
-
-//   "14k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#cbd3cf"),
-//       metalness: 1,
-//       roughness: 0.11,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#d1d5db"),
-//       metalness: 1,
-//       roughness: 0.09,
-//       envMapIntensity: 3,
-//     }),
-
-//   "14k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfba54"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "18k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#e1b13c"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 3.2,
-//     }),
-
-//   "14k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfbeae"),
-//       metalness: 1,
-//       roughness: 0.14,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dca993"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "Pure Platinum":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#c4c4c6"),
-//       metalness: 1,
-//       roughness: 0.07,
-//       envMapIntensity: 3.5,
-//     }),
-
-//   "Palladium Gray":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#bcbcbc"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 2.5,
-//     }),
-// };
-
-// /* STONES */
-// const STONE_GEOMETRIES = {
-
-//   round:
-//     new THREE.IcosahedronGeometry(
-//       1,
-//       3
-//     ),
-
-//   oval: (() => {
-
-//     const geo =
-//       new THREE.IcosahedronGeometry(
-//         1,
-//         3
-//       );
-
-//     geo.scale(
-//       0.72,
-//       1.15,
-//       0.72
-//     );
-
-//     return geo;
-
-//   })(),
-
-//   princess:
-//     new THREE.BoxGeometry(
-//       1,
-//       1,
-//       1
-//     ),
-
-//   emerald:
-//     new THREE.BoxGeometry(
-//       0.75,
-//       1.1,
-//       0.6
-//     ),
-
-//   pear: (() => {
-
-//     const geo =
-//       new THREE.ConeGeometry(
-//         0.6,
-//         1.3,
-//         4
-//       );
-
-//     geo.rotateX(Math.PI);
-
-//     return geo;
-
-//   })(),
-// };
-
-// const STONE_CONFIGS = {
-
-//   round: {
-//     desktopScale: 0.30,
-//     mobileScale: 0.24,
-//     yOffset: 1.02,
-//   },
-
-//   oval: {
-//     desktopScale: 0.28,
-//     mobileScale: 0.22,
-//     yOffset: 1.04,
-//   },
-
-//   princess: {
-//     desktopScale: 0.28,
-//     mobileScale: 0.22,
-//     yOffset: 0.98,
-//   },
-
-//   emerald: {
-//     desktopScale: 0.29,
-//     mobileScale: 0.23,
-//     yOffset: 0.96,
-//   },
-
-//   pear: {
-//     desktopScale: 0.26,
-//     mobileScale: 0.20,
-//     yOffset: 1.05,
-//   },
-// };
-
-// function DiamondStone({
-//   stoneType,
-//   isMobile,
-// }) {
-
-//   const normalizedStone =
-//     stoneType?.toLowerCase();
-
-//   const geometry =
-//     STONE_GEOMETRIES[
-//       normalizedStone
-//     ] ||
-//     STONE_GEOMETRIES.round;
-
-//   const config =
-//     STONE_CONFIGS[
-//       normalizedStone
-//     ] ||
-//     STONE_CONFIGS.round;
-
-//   const scale =
-//     isMobile
-//       ? config.mobileScale
-//       : config.desktopScale;
-
-//   return (
-
-//     <mesh
-//       geometry={geometry}
-//       position={[
-//         0,
-//         config.yOffset,
-//         0,
-//       ]}
-//       scale={scale}
-//     >
-
-//       <meshPhysicalMaterial
-//         color="#ffffff"
-//         transmission={1}
-//         roughness={0.02}
-//         metalness={0}
-//         ior={2.417}
-//         thickness={1}
-//         envMapIntensity={6}
-//         clearcoat={1}
-//         clearcoatRoughness={0}
-//         reflectivity={1}
-//       />
-
-//     </mesh>
-//   );
-// }
-
-// function RingModel({
-//   metal,
-//   stone,
-//   isMobile,
-// }) {
-
-//   const { scene } =
-//     useGLTF(
-//       "/models/ring.glb"
-//     );
-
-//   useEffect(() => {
-
-//     const material =
-//       METAL_MATERIALS[
-//         metal
-//       ] ||
-//       METAL_MATERIALS[
-//         "14k White Gold"
-//       ];
-
-//     scene.traverse((obj) => {
-
-//       if (!obj.isMesh)
-//         return;
-
-//       obj.frustumCulled =
-//         false;
-
-//       const name =
-//         obj.name.toLowerCase();
-
-//       if (
-//         name.includes(
-//           "diamond"
-//         ) ||
-//         name.includes(
-//           "stone"
-//         )
-//       ) {
-
-//         obj.visible =
-//           false;
-
-//         return;
-//       }
-
-//       obj.material =
-//         material;
-
-//     });
-
-//   }, [metal, scene]);
-
-//   useEffect(() => {
-
-//     const box =
-//       new THREE.Box3().setFromObject(
-//         scene
-//       );
-
-//     const size =
-//       new THREE.Vector3();
-
-//     const center =
-//       new THREE.Vector3();
-
-//     box.getSize(size);
-
-//     box.getCenter(center);
-
-//     scene.position.set(
-//       -center.x,
-//       -center.y - 0.1,
-//       -center.z
-//     );
-
-//     const maxDim =
-//       Math.max(
-//         size.x,
-//         size.y,
-//         size.z
-//       );
-
-//     const scale =
-//       isMobile
-//         ? 1.45 / maxDim
-//         : 1.85 / maxDim;
-
-//     scene.scale.setScalar(
-//       scale
-//     );
-
-//   }, [scene, isMobile]);
-
-//   return (
-
-//     <group>
-
-//       <primitive
-//         object={scene}
-//       />
-
-//       <DiamondStone
-//         stoneType={stone}
-//         isMobile={isMobile}
-//       />
-
-//     </group>
-//   );
-// }
-
-// export default function RingViewer() {
-
-//   const {
-//     metal,
-//     stone,
-//   } = useRingStore();
-
-//   const controlsRef =
-//     useRef();
-
-//   const [
-//     isMobile,
-//     setIsMobile,
-//   ] = useState(false);
-
-//   useEffect(() => {
-
-//     const checkMobile =
-//       () =>
-//         setIsMobile(
-//           window.innerWidth <
-//             768
-//         );
-
-//     checkMobile();
-
-//     window.addEventListener(
-//       "resize",
-//       checkMobile
-//     );
-
-//     return () =>
-//       window.removeEventListener(
-//         "resize",
-//         checkMobile
-//       );
-
-//   }, []);
-
-//   return (
-
-//     <div
-//       className="w-full h-full"
-//     >
-
-//       <Canvas
-//         camera={{
-//           position: [
-//             0,
-//             0.5,
-//             5,
-//           ],
-//           fov: 35,
-//         }}
-//       >
-
-//         <color
-//           attach="background"
-//           args={["#080808"]}
-//         />
-
-//         <ambientLight
-//           intensity={0.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             10,
-//             15,
-//             10,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             8,
-//             0,
-//             -8,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <Suspense
-//           fallback={null}
-//         >
-
-//           <Environment preset="studio" />
-
-//           <Float
-//             speed={1.2}
-//             rotationIntensity={0.15}
-//             floatIntensity={0.3}
-//           >
-
-//             <RingModel
-//               metal={metal}
-//               stone={stone}
-//               isMobile={
-//                 isMobile
-//               }
-//             />
-
-//           </Float>
-
-//         </Suspense>
-
-//         <OrbitControls
-//           ref={controlsRef}
-//           enablePan={false}
-//           enableZoom={false}
-//           enableDamping
-//           dampingFactor={0.05}
-//           rotateSpeed={
-//             isMobile
-//               ? 0.7
-//               : 0.45
-//           }
-//         />
-
-//       </Canvas>
-
-//     </div>
-//   );
-// }
-
-
-
-// import { Suspense, useEffect, useRef, useState } from "react";
-
-// import { Canvas } from "@react-three/fiber";
-
-// import {
-//   Environment,
-//   useGLTF,
-//   OrbitControls,
-//   Float,
-// } from "@react-three/drei";
-
-// import * as THREE from "three";
-
-// import useRingStore from "../store/useRingStore";
-
-// useGLTF.preload("/models/ring.glb");
-
-// /* MATERIALS */
-// const METAL_MATERIALS = {
-
-//   "14k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#cbd3cf"),
-//       metalness: 1,
-//       roughness: 0.11,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#d1d5db"),
-//       metalness: 1,
-//       roughness: 0.09,
-//       envMapIntensity: 3,
-//     }),
-
-//   "14k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfba54"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "18k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#e1b13c"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 3.2,
-//     }),
-
-//   "14k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfbeae"),
-//       metalness: 1,
-//       roughness: 0.14,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dca993"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "Pure Platinum":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#c4c4c6"),
-//       metalness: 1,
-//       roughness: 0.07,
-//       envMapIntensity: 3.5,
-//     }),
-
-//   "Palladium Gray":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#bcbcbc"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 2.5,
-//     }),
-// };
-
-// /* STONES */
-// const STONE_GEOMETRIES = {
-
-//   round:
-//     new THREE.IcosahedronGeometry(
-//       1,
-//       3
-//     ),
-
-//   oval: (() => {
-
-//     const geo =
-//       new THREE.IcosahedronGeometry(
-//         1,
-//         3
-//       );
-
-//     geo.scale(
-//       0.72,
-//       1.15,
-//       0.72
-//     );
-
-//     return geo;
-
-//   })(),
-
-//   princess:
-//     new THREE.BoxGeometry(
-//       1,
-//       1,
-//       1
-//     ),
-
-//   emerald:
-//     new THREE.BoxGeometry(
-//       0.75,
-//       1.1,
-//       0.6
-//     ),
-
-//   pear: (() => {
-
-//     const geo =
-//       new THREE.ConeGeometry(
-//         0.6,
-//         1.3,
-//         4
-//       );
-
-//     geo.rotateX(Math.PI);
-
-//     return geo;
-
-//   })(),
-// };
-
-// /* --- SCALES HALKA SA CHOTA KIYA HAI --- */
-// const STONE_CONFIGS = {
-
-//   round: {
-//     desktopScale: 0.25, // 0.30 se chota kiya
-//     mobileScale: 0.20,  // 0.24 se chota kiya
-//     yOffset: 1.02,
-//   },
-
-//   oval: {
-//     desktopScale: 0.24, // 0.28 se chota kiya
-//     mobileScale: 0.19,  // 0.22 se chota kiya
-//     yOffset: 1.04,
-//   },
-
-//   princess: {
-//     desktopScale: 0.24, // 0.28 se chota kiya
-//     mobileScale: 0.19,  // 0.22 se chota kiya
-//     yOffset: 0.98,
-//   },
-
-//   emerald: {
-//     desktopScale: 0.24, // 0.29 se chota kiya
-//     mobileScale: 0.19,  // 0.23 se chota kiya
-//     yOffset: 0.96,
-//   },
-
-//   pear: {
-//     desktopScale: 0.22, // 0.26 se chota kiya
-//     mobileScale: 0.17,  // 0.20 se chota kiya
-//     yOffset: 1.05,
-//   },
-// };
-
-// function DiamondStone({
-//   stoneType,
-//   isMobile,
-// }) {
-
-//   const normalizedStone =
-//     stoneType?.toLowerCase();
-
-//   const geometry =
-//     STONE_GEOMETRIES[
-//       normalizedStone
-//     ] ||
-//     STONE_GEOMETRIES.round;
-
-//   const config =
-//     STONE_CONFIGS[
-//       normalizedStone
-//     ] ||
-//     STONE_CONFIGS.round;
-
-//   const scale =
-//     isMobile
-//       ? config.mobileScale
-//       : config.desktopScale;
-
-//   return (
-
-//     <mesh
-//       geometry={geometry}
-//       position={[
-//         0,
-//         config.yOffset,
-//         0,
-//       ]}
-//       scale={scale}
-//     >
-
-//       <meshPhysicalMaterial
-//         color="#ffffff"
-//         transmission={1}
-//         roughness={0.02}
-//         metalness={0}
-//         ior={2.417}
-//         thickness={1}
-//         envMapIntensity={6}
-//         clearcoat={1}
-//         clearcoatRoughness={0}
-//         reflectivity={1}
-//       />
-
-//     </mesh>
-//   );
-// }
-
-// function RingModel({
-//   metal,
-//   stone,
-//   isMobile,
-// }) {
-
-//   const { scene } =
-//     useGLTF(
-//       "/models/ring.glb"
-//     );
-
-//   useEffect(() => {
-
-//     const material =
-//       METAL_MATERIALS[
-//         metal
-//       ] ||
-//       METAL_MATERIALS[
-//         "14k White Gold"
-//       ];
-
-//     scene.traverse((obj) => {
-
-//       if (!obj.isMesh)
-//         return;
-
-//       obj.frustumCulled =
-//         false;
-
-//       const name =
-//         obj.name.toLowerCase();
-
-//       if (
-//         name.includes(
-//           "diamond"
-//         ) ||
-//         name.includes(
-//           "stone"
-//         )
-//       ) {
-
-//         obj.visible =
-//           false;
-
-//         return;
-//       }
-
-//       obj.material =
-//         material;
-
-//     });
-
-//   }, [metal, scene]);
-
-//   useEffect(() => {
-
-//     const box =
-//       new THREE.Box3().setFromObject(
-//         scene
-//       );
-
-//     const size =
-//       new THREE.Vector3();
-
-//     const center =
-//       new THREE.Vector3();
-
-//     box.getSize(size);
-
-//     box.getCenter(center);
-
-//     scene.position.set(
-//       -center.x,
-//       -center.y - 0.1,
-//       -center.z
-//     );
-
-//     const maxDim =
-//       Math.max(
-//         size.x,
-//         size.y,
-//         size.z
-//       );
-
-//     const scale =
-//       isMobile
-//         ? 1.45 / maxDim
-//         : 1.85 / maxDim;
-
-//     scene.scale.setScalar(
-//       scale
-//     );
-
-//   }, [scene, isMobile]);
-
-//   return (
-
-//     <group>
-
-//       <primitive
-//         object={scene}
-//       />
-
-//       <DiamondStone
-//         stoneType={stone}
-//         isMobile={isMobile}
-//       />
-
-//     </group>
-//   );
-// }
-
-// export default function RingViewer() {
-
-//   const {
-//     metal,
-//     stone,
-//   } = useRingStore();
-
-//   const controlsRef =
-//     useRef();
-
-//   const [
-//     isMobile,
-//     setIsMobile,
-//   ] = useState(false);
-
-//   useEffect(() => {
-
-//     const checkMobile =
-//       () =>
-//         setIsMobile(
-//           window.innerWidth <
-//             768
-//         );
-
-//     checkMobile();
-
-//     window.addEventListener(
-//       "resize",
-//       checkMobile
-//     );
-
-//     return () =>
-//       window.removeEventListener(
-//         "resize",
-//         checkMobile
-//       );
-
-//   }, []);
-
-//   return (
-
-//     <div
-//       className="w-full h-full"
-//     >
-
-//       <Canvas
-//         camera={{
-//           position: [
-//             0,
-//             0.5,
-//             5,
-//           ],
-//           fov: 35,
-//         }}
-//       >
-
-//         <color
-//           attach="background"
-//           args={["#080808"]}
-//         />
-
-//         <ambientLight
-//           intensity={0.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             10,
-//             15,
-//             10,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             8,
-//             0,
-//             -8,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <Suspense
-//           fallback={null}
-//         >
-
-//           <Environment preset="studio" />
-
-//           <Float
-//             speed={1.2}
-//             rotationIntensity={0.15}
-//             floatIntensity={0.3}
-//           >
-
-//             <RingModel
-//               metal={metal}
-//               stone={stone}
-//               isMobile={
-//                 isMobile
-//               }
-//             />
-
-//           </Float>
-
-//         </Suspense>
-
-//         <OrbitControls
-//           ref={controlsRef}
-//           enablePan={false}
-//           enableZoom={false}
-//           enableDamping
-//           dampingFactor={0.05}
-//           rotateSpeed={
-//             isMobile
-//               ? 0.7
-//               : 0.45
-//           }
-//         />
-
-//       </Canvas>
-
-//     </div>
-//   );
-// }
-
-
-// import { Suspense, useEffect, useRef, useState } from "react";
-
-// import { Canvas } from "@react-three/fiber";
-
-// import {
-//   Environment,
-//   useGLTF,
-//   OrbitControls,
-//   Float,
-// } from "@react-three/drei";
-
-// import * as THREE from "three";
-
-// import useRingStore from "../store/useRingStore";
-
-// useGLTF.preload("/models/ring.glb");
-
-// /* MATERIALS */
-// const METAL_MATERIALS = {
-
-//   "14k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#cbd3cf"),
-//       metalness: 1,
-//       roughness: 0.11,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k White Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#d1d5db"),
-//       metalness: 1,
-//       roughness: 0.09,
-//       envMapIntensity: 3,
-//     }),
-
-//   "14k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfba54"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "18k Yellow Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#e1b13c"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 3.2,
-//     }),
-
-//   "14k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dfbeae"),
-//       metalness: 1,
-//       roughness: 0.14,
-//       envMapIntensity: 2.8,
-//     }),
-
-//   "18k Rose Gold":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#dca993"),
-//       metalness: 1,
-//       roughness: 0.12,
-//       envMapIntensity: 3,
-//     }),
-
-//   "Pure Platinum":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#c4c4c6"),
-//       metalness: 1,
-//       roughness: 0.07,
-//       envMapIntensity: 3.5,
-//     }),
-
-//   "Palladium Gray":
-//     new THREE.MeshStandardMaterial({
-//       color: new THREE.Color("#bcbcbc"),
-//       metalness: 1,
-//       roughness: 0.10,
-//       envMapIntensity: 2.5,
-//     }),
-// };
-
-// /* STONES */
-// const STONE_GEOMETRIES = {
-
-//   round:
-//     new THREE.IcosahedronGeometry(
-//       1,
-//       3
-//     ),
-
-//   oval: (() => {
-
-//     const geo =
-//       new THREE.IcosahedronGeometry(
-//         1,
-//         3
-//       );
-
-//     geo.scale(
-//       0.72,
-//       1.15,
-//       0.72
-//     );
-
-//     return geo;
-
-//   })(),
-
-//   princess:
-//     new THREE.BoxGeometry(
-//       1,
-//       1,
-//       1
-//     ),
-
-//   emerald:
-//     new THREE.BoxGeometry(
-//       0.75,
-//       1.1,
-//       0.6
-//     ),
-
-//   pear: (() => {
-
-//     const geo =
-//       new THREE.ConeGeometry(
-//         0.6,
-//         1.3,
-//         4
-//       );
-
-//     geo.rotateX(Math.PI);
-
-//     return geo;
-
-//   })(),
-// };
-
-// /* --- DIRECT STONE SCALES REDUCED BY 20% FOR MINIMAL LOOK --- */
-// const STONE_CONFIGS = {
-
-//   round: {
-//     desktopScale: 0.20, // 0.25 se direct kam kiya taaki minimal chota lage
-//     mobileScale: 0.16,  
-//     yOffset: 1.00,      // Top par alignment stable rakhne ke liye
-//   },
-
-//   oval: {
-//     desktopScale: 0.19, 
-//     mobileScale: 0.15,  
-//     yOffset: 1.02,
-//   },
-
-//   princess: {
-//     desktopScale: 0.19, 
-//     mobileScale: 0.15,  
-//     yOffset: 0.96,
-//   },
-
-//   emerald: {
-//     desktopScale: 0.19, // Emerald ko shuruati 0.29 se bohot sahi chota size diya hai
-//     mobileScale: 0.15,  
-//     yOffset: 0.94,      // Top crown hooks ke upar bina gap fit hone ke liye
-//   },
-
-//   pear: {
-//     desktopScale: 0.18, 
-//     mobileScale: 0.14,  
-//     yOffset: 1.02,
-//   },
-// };
-
-// function DiamondStone({
-//   stoneType,
-//   isMobile,
-// }) {
-
-//   const normalizedStone =
-//     stoneType?.toLowerCase();
-
-//   const geometry =
-//     STONE_GEOMETRIES[
-//       normalizedStone
-//     ] ||
-//     STONE_GEOMETRIES.round;
-
-//   const config =
-//     STONE_CONFIGS[
-//       normalizedStone
-//     ] ||
-//     STONE_CONFIGS.round;
-
-//   const scale =
-//     isMobile
-//       ? config.mobileScale
-//       : config.desktopScale;
-
-//   return (
-
-//     <mesh
-//       geometry={geometry}
-//       position={[
-//         0,
-//         config.yOffset,
-//         0,
-//       ]}
-//       scale={scale}
-//     >
-
-//       <meshPhysicalMaterial
-//         color="#ffffff"
-//         transmission={1}
-//         roughness={0.02}
-//         metalness={0}
-//         ior={2.417}
-//         thickness={1}
-//         envMapIntensity={6}
-//         clearcoat={1}
-//         clearcoatRoughness={0}
-//         reflectivity={1}
-//       />
-
-//     </mesh>
-//   );
-// }
-
-// function RingModel({
-//   metal,
-//   stone,
-//   isMobile,
-// }) {
-
-//   const { scene } =
-//     useGLTF(
-//       "/models/ring.glb"
-//     );
-
-//   useEffect(() => {
-
-//     const material =
-//       METAL_MATERIALS[
-//         metal
-//       ] ||
-//       METAL_MATERIALS[
-//         "14k White Gold"
-//       ];
-
-//     scene.traverse((obj) => {
-
-//       if (!obj.isMesh)
-//         return;
-
-//       obj.frustumCulled =
-//         false;
-
-//       const name =
-//         obj.name.toLowerCase();
-
-//       if (
-//         name.includes(
-//           "diamond"
-//         ) ||
-//         name.includes(
-//           "stone"
-//         )
-//       ) {
-
-//         obj.visible =
-//           false;
-
-//         return;
-//       }
-
-//       obj.material =
-//         material;
-
-//     });
-
-//   }, [metal, scene]);
-
-//   useEffect(() => {
-
-//     const box =
-//       new THREE.Box3().setFromObject(
-//         scene
-//       );
-
-//     const size =
-//       new THREE.Vector3();
-
-//     const center =
-//       new THREE.Vector3();
-
-//     box.getSize(size);
-
-//     box.getCenter(center);
-
-//     scene.position.set(
-//       -center.x,
-//       -center.y - 0.1,
-//       -center.z
-//     );
-
-//     const maxDim =
-//       Math.max(
-//         size.x,
-//         size.y,
-//         size.z
-//       );
-
-//     // Ring size standard par reset kiya taaki stone proportion me chota dikhe
-//     const scale =
-//       isMobile
-//         ? 1.45 / maxDim
-//         : 1.85 / maxDim;
-
-//     scene.scale.setScalar(
-//       scale
-//     );
-
-//   }, [scene, isMobile]);
-
-//   return (
-
-//     <group>
-
-//       <primitive
-//         object={scene}
-//       />
-
-//       <DiamondStone
-//         stoneType={stone}
-//         isMobile={isMobile}
-//       />
-
-//     </group>
-//   );
-// }
-
-// export default function RingViewer() {
-
-//   const {
-//     metal,
-//     stone,
-//   } = useRingStore();
-
-//   const controlsRef =
-//     useRef();
-
-//   const [
-//     isMobile,
-//     setIsMobile,
-//   ] = useState(false);
-
-//   useEffect(() => {
-
-//     const checkMobile =
-//       () =>
-//         setIsMobile(
-//           window.innerWidth <
-//             768
-//         );
-
-//     checkMobile();
-
-//     window.addEventListener(
-//       "resize",
-//       checkMobile
-//     );
-
-//     return () =>
-//       window.removeEventListener(
-//         "resize",
-//         checkMobile
-//       );
-
-//   }, []);
-
-//   return (
-
-//     <div
-//       className="w-full h-full"
-//     >
-
-//       <Canvas
-//         camera={{
-//           position: [
-//             0,
-//             0.5,
-//             5,
-//           ],
-//           fov: 35,
-//         }}
-//       >
-
-//         <color
-//           attach="background"
-//           args={["#080808"]}
-//         />
-
-//         <ambientLight
-//           intensity={0.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             10,
-//             15,
-//             10,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <directionalLight
-//           position={[
-//             8,
-//             0,
-//             -8,
-//           ]}
-//           intensity={2.5}
-//         />
-
-//         <Suspense
-//           fallback={null}
-//         >
-
-//           <Environment preset="studio" />
-
-//           <Float
-//             speed={1.2}
-//             rotationIntensity={0.15}
-//             floatIntensity={0.3}
-//           >
-
-//             <RingModel
-//               metal={metal}
-//               stone={stone}
-//               isMobile={
-//                 isMobile
-//               }
-//             />
-
-//           </Float>
-
-//         </Suspense>
-
-//         <OrbitControls
-//           ref={controlsRef}
-//           enablePan={false}
-//           enableZoom={false}
-//           enableDamping
-//           dampingFactor={0.05}
-//           rotateSpeed={
-//             isMobile
-//               ? 0.7
-//               : 0.45
-//           }
-//         />
-
-//       </Canvas>
-
-//     </div>
-//   );
-// }
-
-
-
 import { Suspense, useEffect, useRef, useState } from "react";
-
 import { Canvas } from "@react-three/fiber";
-
 import {
   Environment,
   useGLTF,
   OrbitControls,
   Float,
 } from "@react-three/drei";
-
 import * as THREE from "three";
-
 import useRingStore from "../store/useRingStore";
 
-useGLTF.preload("/models/ring.glb");
+/* PRELOAD MODEL */
+useGLTF.preload("/models/chapelhills_monahan.glb");
 
-/* MATERIALS */
+/* PREMIUM METAL MATERIALS */
 const METAL_MATERIALS = {
+  "14k White Gold": new THREE.MeshStandardMaterial({
+    color: "#d9d9d9",
+    metalness: 1,
+    roughness: 0.15,
+    envMapIntensity: 5,
+  }),
 
-  "14k White Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#cbd3cf"),
-      metalness: 1,
-      roughness: 0.11,
-      envMapIntensity: 2.8,
-    }),
+  "18k White Gold": new THREE.MeshStandardMaterial({
+    color: "#f0f0f0",
+    metalness: 1,
+    roughness: 0.12,
+    envMapIntensity: 5,
+  }),
 
-  "18k White Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#d1d5db"),
-      metalness: 1,
-      roughness: 0.09,
-      envMapIntensity: 3,
-    }),
+  "14k Yellow Gold": new THREE.MeshStandardMaterial({
+    color: "#dfba54",
+    metalness: 1,
+    roughness: 0.14,
+    envMapIntensity: 5,
+  }),
 
-  "14k Yellow Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#dfba54"),
-      metalness: 1,
-      roughness: 0.12,
-      envMapIntensity: 3,
-    }),
+  "18k Yellow Gold": new THREE.MeshStandardMaterial({
+    color: "#f1c94a",
+    metalness: 1,
+    roughness: 0.12,
+    envMapIntensity: 5,
+  }),
 
-  "18k Yellow Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#e1b13c"),
-      metalness: 1,
-      roughness: 0.10,
-      envMapIntensity: 3.2,
-    }),
+  "14k Rose Gold": new THREE.MeshStandardMaterial({
+    color: "#E5A493",
+    metalness: 1,
+    roughness: 0.14,
+    envMapIntensity: 5,
+  }),
 
-  "14k Rose Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#E5A493"),
-      metalness: 1,
-      roughness: 0.14,
-      envMapIntensity: 2.8,
-    }),
+  "18k Rose Gold": new THREE.MeshStandardMaterial({
+    color: "#dca993",
+    metalness: 1,
+    roughness: 0.12,
+    envMapIntensity: 5,
+  }),
 
-  "18k Rose Gold":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#dca993"),
-      metalness: 1,
-      roughness: 0.12,
-      envMapIntensity: 3,
-    }),
+  "Pure Platinum": new THREE.MeshStandardMaterial({
+    color: "#cfcfcf",
+    metalness: 1,
+    roughness: 0.08,
+    envMapIntensity: 6,
+  }),
 
-  "Pure Platinum":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#c4c4c6"),
-      metalness: 1,
-      roughness: 0.07,
-      envMapIntensity: 3.5,
-    }),
-
-  "Palladium Gray":
-    new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#bcbcbc"),
-      metalness: 1,
-      roughness: 0.10,
-      envMapIntensity: 2.5,
-    }),
+  "Palladium Gray": new THREE.MeshStandardMaterial({
+    color: "#bdbdbd",
+    metalness: 1,
+    roughness: 0.1,
+    envMapIntensity: 5,
+  }),
 };
 
-/* STONES */
-const STONE_GEOMETRIES = {
-
-  round:
-    new THREE.IcosahedronGeometry(
-      1,
-      3
-    ),
-
-  oval: (() => {
-
-    const geo =
-      new THREE.IcosahedronGeometry(
-        1,
-        3
-      );
-
-    geo.scale(
-      0.72,
-      1.15,
-      0.72
-    );
-
-    return geo;
-
-  })(),
-
-  princess:
-    new THREE.BoxGeometry(
-      1,
-      1,
-      1
-    ),
-
-  emerald:
-    new THREE.BoxGeometry(
-      0.75,
-      1.1,
-      0.6
-    ),
-
-  pear: (() => {
-
-    const geo =
-      new THREE.ConeGeometry(
-        0.6,
-        1.3,
-        4
-      );
-
-    geo.rotateX(Math.PI);
-
-    return geo;
-
-  })(),
-};
-
-/* --- FIXED STABLE POSITION CONFIGS FOR PROD/VERCEL --- */
-const STONE_CONFIGS = {
-
-  round: {
-    desktopScale: 0.20,
-    mobileScale: 0.16,
-    yOffset: 0.90, // Group lock ke baad offset thodha balance kiya taaki perfect baithe
-  },
-
-  oval: {
-    desktopScale: 0.19,
-    mobileScale: 0.15,
-    yOffset: 0.92,
-  },
-
-  princess: {
-    desktopScale: 0.19,
-    mobileScale: 0.15,
-    yOffset: 0.86,
-  },
-
-  emerald: {
-    desktopScale: 0.19,
-    mobileScale: 0.15,
-    yOffset: 0.84,
-  },
-
-  pear: {
-    desktopScale: 0.18,
-    mobileScale: 0.14,
-    yOffset: 0.92,
-  },
-};
-
-function DiamondStone({
-  stoneType,
-  isMobile,
-}) {
-
-  const normalizedStone =
-    stoneType?.toLowerCase();
-
-  const geometry =
-    STONE_GEOMETRIES[
-      normalizedStone
-    ] ||
-    STONE_GEOMETRIES.round;
-
-  const config =
-    STONE_CONFIGS[
-      normalizedStone
-    ] ||
-    STONE_CONFIGS.round;
-
-  const scale =
-    isMobile
-      ? config.mobileScale
-      : config.desktopScale;
-
-  return (
-
-    <mesh
-      geometry={geometry}
-      position={[
-        0,
-        config.yOffset,
-        0,
-      ]}
-      scale={scale}
-    >
-
-      <meshPhysicalMaterial
-        color="#ffffff"
-        transmission={1}
-        roughness={0.02}
-        metalness={0}
-        ior={2.417}
-        thickness={1}
-        envMapIntensity={6}
-        clearcoat={1}
-        clearcoatRoughness={0}
-        reflectivity={1}
-      />
-
-    </mesh>
-  );
-}
-
-function RingModel({
-  metal,
-  stone,
-  isMobile,
-}) {
-
-  const { scene } =
-    useGLTF(
-      "/models/ring.glb"
-    );
+function RingModel({ metal, stone, isMobile }) {
+  const { scene } = useGLTF("/models/chapelhills_monahan.glb");
 
   useEffect(() => {
-
-    const material =
-      METAL_MATERIALS[
-        metal
-      ] ||
-      METAL_MATERIALS[
-        "14k White Gold"
-      ];
+    const metalMaterial =
+      METAL_MATERIALS[metal] ||
+      METAL_MATERIALS["14k White Gold"];
 
     scene.traverse((obj) => {
+      if (!obj.isMesh) return;
 
-      if (!obj.isMesh)
-        return;
+      obj.frustumCulled = false;
 
-      obj.frustumCulled =
-        false;
+      const name = obj.name.toLowerCase();
 
-      const name =
-        obj.name.toLowerCase();
+      /* 💎 MAIN DIAMOND */
+      if (name.includes("diamond_round_12_material_1_0")) {
 
-      if (
-        name.includes(
-          "diamond"
-        ) ||
-        name.includes(
-          "stone"
-        )
-      ) {
+        obj.rotation.set(0, 0, 0);
 
-        obj.visible =
-          false;
+        /* 💍 STONE SHAPE */
+        switch (stone?.toLowerCase()) {
+
+          case "oval":
+            obj.scale.set(0.75, 1.05, 1);
+            break;
+
+          case "princess":
+            obj.scale.set(0.85, 0.85, 1);
+            break;
+
+          case "emerald":
+            obj.scale.set(0.7, 1.0, 1.0);
+            break;
+
+          case "pear":
+            obj.scale.set(0.75, 1.15, 1);
+            obj.rotation.z = Math.PI;
+            break;
+
+          default:
+            obj.scale.set(0.9, 0.9, 1);
+        }
+
+        /* ✅ PERFECT TOP CENTER POSITION */
+        obj.position.set(0, 0.12, 0);
+
+        /* 💎 DIAMOND MATERIAL */
+        obj.material = new THREE.MeshPhysicalMaterial({
+          color: "#ffffff",
+          transmission: 1,
+          roughness: 0,
+          metalness: 0,
+          ior: 2.417,
+          thickness: 1.5,
+          envMapIntensity: 18,
+          clearcoat: 1,
+          clearcoatRoughness: 0,
+          reflectivity: 1,
+        });
 
         return;
       }
 
-      obj.material =
-        material;
-
+      /* 💍 METAL MATERIAL */
+      obj.material = metalMaterial;
     });
 
-  }, [metal, scene]);
+  }, [metal, stone, scene]);
 
+  /* 📐 PERFECT CENTER */
   useEffect(() => {
 
-    const box =
-      new THREE.Box3().setFromObject(
-        scene
-      );
+    const box = new THREE.Box3().setFromObject(scene);
 
-    const size =
-      new THREE.Vector3();
-
-    const center =
-      new THREE.Vector3();
-
-    box.getSize(size);
+    const center = new THREE.Vector3();
 
     box.getCenter(center);
 
-    // Baseline code reset
     scene.position.set(
       -center.x,
       -center.y,
       -center.z
     );
 
-    const maxDim =
-      Math.max(
-        size.x,
-        size.y,
-        size.z
-      );
+    /* 🔥 PERFECT SIZE */
+    const scale = isMobile ? 27 : 41;
 
-    const scale =
-      isMobile
-        ? 1.45 / maxDim
-        : 1.85 / maxDim;
-
-    scene.scale.setScalar(
-      scale
-    );
+    scene.scale.set(scale, scale, scale);
 
   }, [scene, isMobile]);
 
   return (
-    /* --- LOCKED TOGETHER INSIDE ONE BASE GROUP TO FIX PRODUCTION GAP --- */
     <group>
-      <group position={[0, -0.1, 0]}> 
-        <primitive object={scene} />
-      </group>
-      <DiamondStone
-        stoneType={stone}
-        isMobile={isMobile}
-      />
+      <primitive object={scene} />
     </group>
   );
 }
 
 export default function RingViewer() {
 
-  const {
-    metal,
-    stone,
-  } = useRingStore();
+  const { metal, stone } = useRingStore();
 
-  const controlsRef =
-    useRef();
+  const controlsRef = useRef();
 
-  const [
-    isMobile,
-    setIsMobile,
-  ] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
 
-    const checkMobile =
-      () =>
-        setIsMobile(
-          window.innerWidth <
-            768
-        );
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
     checkMobile();
 
-    window.addEventListener(
-      "resize",
-      checkMobile
-    );
+    window.addEventListener("resize", checkMobile);
 
     return () =>
-      window.removeEventListener(
-        "resize",
-        checkMobile
-      );
+      window.removeEventListener("resize", checkMobile);
 
   }, []);
 
   return (
-
-    <div
-      className="w-full h-full"
-    >
+    <div className="w-full h-full">
 
       <Canvas
+        gl={{
+          antialias: true,
+          preserveDrawingBuffer: true,
+        }}
         camera={{
-          position: [
-            0,
-            0.5,
-            5,
-          ],
-          fov: 35,
+          position: [0, 0, 2.2],
+          fov: 45,
         }}
       >
 
-        <color
-          attach="background"
-          args={["#080808"]}
-        />
+        <color attach="background" args={["#050505"]} />
 
-        <ambientLight
-          intensity={0.5}
+        {/* 💡 LIGHTS */}
+        <ambientLight intensity={2.5} />
+
+        <directionalLight
+          position={[10, 10, 10]}
+          intensity={6}
         />
 
         <directionalLight
-          position={[
-            10,
-            15,
-            10,
-          ]}
-          intensity={2.5}
+          position={[-10, 10, 5]}
+          intensity={4}
         />
 
-        <directionalLight
-          position={[
-            8,
-            0,
-            -8,
-          ]}
-          intensity={2.5}
+        <pointLight
+          position={[0, 5, 5]}
+          intensity={3}
         />
 
-        <Suspense
-          fallback={null}
-        >
+        <Suspense fallback={null}>
 
-          <Environment preset="studio" />
+          <Environment preset="city" />
 
-          {/* Float component ab is poor single integrated module ko treat karega */}
           <Float
-            speed={1.2}
-            rotationIntensity={0.15}
-            floatIntensity={0.3}
+            speed={0.8}
+            rotationIntensity={0.05}
+            floatIntensity={0.03}
           >
 
             <RingModel
               metal={metal}
               stone={stone}
-              isMobile={
-                isMobile
-              }
+              isMobile={isMobile}
             />
 
           </Float>
@@ -1862,11 +253,8 @@ export default function RingViewer() {
           enableZoom={false}
           enableDamping
           dampingFactor={0.05}
-          rotateSpeed={
-            isMobile
-              ? 0.7
-              : 0.45
-          }
+          target={[0, 0, 0]}
+          rotateSpeed={isMobile ? 0.7 : 0.45}
         />
 
       </Canvas>
