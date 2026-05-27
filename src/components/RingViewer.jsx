@@ -140,36 +140,68 @@ const STONE_GEOMETRIES = {
   })(),
 };
 
-const STONE_CONFIGS = {
+// const STONE_CONFIGS = {
 
+//   round: {
+//     desktopScale: 0.30,
+//     mobileScale: 0.24,
+//     yOffset: 1.02,
+//   },
+
+//   oval: {
+//     desktopScale: 0.28,
+//     mobileScale: 0.22,
+//     yOffset: 1.04,
+//   },
+
+//   princess: {
+//     desktopScale: 0.28,
+//     mobileScale: 0.22,
+//     yOffset: 0.98,
+//   },
+
+//   emerald: {
+//     desktopScale: 0.29,
+//     mobileScale: 0.23,
+//     yOffset: 0.96,
+//   },
+
+//   pear: {
+//     desktopScale: 0.26,
+//     mobileScale: 0.20,
+//     yOffset: 1.05,
+//   },
+// };
+
+const STONE_CONFIGS = {
   round: {
-    desktopScale: 0.30,
-    mobileScale: 0.24,
-    yOffset: 1.02,
+    desktopScale: 0.16,
+    mobileScale: 0.13,
+    yOffset: 0.52,
   },
 
   oval: {
-    desktopScale: 0.28,
-    mobileScale: 0.22,
-    yOffset: 1.04,
+    desktopScale: 0.16,
+    mobileScale: 0.13,
+    yOffset: 0.54,
   },
 
   princess: {
-    desktopScale: 0.28,
-    mobileScale: 0.22,
-    yOffset: 0.98,
+    desktopScale: 0.15,
+    mobileScale: 0.12,
+    yOffset: 0.50,
   },
 
   emerald: {
-    desktopScale: 0.29,
-    mobileScale: 0.23,
-    yOffset: 0.96,
+    desktopScale: 0.15,
+    mobileScale: 0.12,
+    yOffset: 0.48,
   },
 
   pear: {
-    desktopScale: 0.26,
-    mobileScale: 0.20,
-    yOffset: 1.05,
+    desktopScale: 0.15,
+    mobileScale: 0.12,
+    yOffset: 0.56,
   },
 };
 
@@ -183,13 +215,13 @@ function DiamondStone({
 
   const geometry =
     STONE_GEOMETRIES[
-      normalizedStone
+    normalizedStone
     ] ||
     STONE_GEOMETRIES.round;
 
   const config =
     STONE_CONFIGS[
-      normalizedStone
+    normalizedStone
     ] ||
     STONE_CONFIGS.round;
 
@@ -242,10 +274,10 @@ function RingModel({
 
     const material =
       METAL_MATERIALS[
-        metal
+      metal
       ] ||
       METAL_MATERIALS[
-        "14k White Gold"
+      "14k White Gold"
       ];
 
     scene.traverse((obj) => {
@@ -313,8 +345,8 @@ function RingModel({
 
     const scale =
       isMobile
-        ? 1.45 / maxDim
-        : 1.85 / maxDim;
+        ? 1.15 / maxDim
+        : 1.45 / maxDim;
 
     scene.scale.setScalar(
       scale
@@ -360,7 +392,7 @@ export default function RingViewer() {
       () =>
         setIsMobile(
           window.innerWidth <
-            768
+          768
         );
 
     checkMobile();
