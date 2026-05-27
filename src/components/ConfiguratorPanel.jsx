@@ -18,7 +18,7 @@ const METAL_STYLES = {
     "bg-[#e1b13c]",
 
   "14k Rose Gold":
-    "bg-[#dfbeae]",
+    "bg-[#E5A493]",
 
   "18k Rose Gold":
     "bg-[#dca993]",

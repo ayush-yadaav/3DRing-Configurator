@@ -184,7 +184,6 @@ export default function App() {
     flex
     items-center
     justify-center
-
     lg:pl-10
     xl:pl-16
   "
