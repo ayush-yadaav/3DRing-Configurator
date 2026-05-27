@@ -102,6 +102,8 @@ export default function App() {
     localStorage.setItem("ring-cart", JSON.stringify(updated));
   };
 
+  
+
   return (
     <main className="bg-[#050505] text-white overflow-x-hidden">
 

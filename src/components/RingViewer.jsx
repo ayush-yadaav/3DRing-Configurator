@@ -13,8 +13,8 @@ import * as THREE from "three";
 
 import useRingStore from "../store/useRingStore";
 
-useGLTF.preload("/models/ring.glb");
 
+useGLTF.preload("/models/ring.glb");
 
 const METAL_MATERIALS = {
 
