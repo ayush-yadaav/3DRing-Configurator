@@ -7,7 +7,7 @@ function RingModel() {
   const meshRef = useRef();
   
 
-  const { scene } = useGLTF("/models/ring.glb"); 
+  const { scene } = useGLTF("/public/models/ring.glb"); 
 
  
   useFrame((state, delta) => {
