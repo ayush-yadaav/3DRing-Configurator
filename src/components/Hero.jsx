@@ -62,9 +62,9 @@ export default function Hero({ product, ease }) {
 
           
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5 mt-8 lg:mt-12 w-full sm:w-auto">
-            <button className="w-full sm:w-auto px-8 lg:px-9 py-3.5 lg:py-4 rounded-full bg-yellow-400 text-black text-xs font-medium tracking-[0.25em] lg:tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all duration-500">
+            {/* <button className="w-full sm:w-auto px-8 lg:px-9 py-3.5 lg:py-4 rounded-full bg-yellow-400 text-black text-xs font-medium tracking-[0.25em] lg:tracking-[0.3em] uppercase hover:scale-105 active:scale-95 transition-all duration-500">
               Explore Ring
-            </button>
+            </button> */}
             <button className="w-full sm:w-auto px-8 lg:px-9 py-3.5 lg:py-4 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-xl text-xs font-medium tracking-[0.25em] lg:tracking-[0.3em] uppercase hover:border-yellow-400/40 hover:bg-white/[0.05] active:scale-95 transition-all duration-500">
               <a href="#ring">Craft Your Story</a>
             </button>
