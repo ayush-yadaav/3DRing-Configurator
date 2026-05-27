@@ -1,59 +1,161 @@
 import { motion } from "framer-motion";
 
 export default function HeroRingViewer() {
-  const ringImagePng = "/ring1.png"; 
+
+  const ringImagePng = "/ring2.png";
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center select-none pointer-events-none">
-      
-      {/* Background Glow */}
-      <div className="absolute w-[75%] h-[75%] bg-yellow-400/15 rounded-full blur-[80px] md:blur-[120px] mix-blend-screen animate-pulse duration-[5000ms]" />
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden select-none pointer-events-none">
 
-      {/* 🚀 Image Container Size Increased here */}
+      {/* ✨ PREMIUM GOLD AMBIENT GLOW */}
       <motion.div
-        className="relative w-full h-full max-w-[340px] sm:max-w-[460px] lg:max-w-[540px] aspect-square flex items-center justify-center"
-        initial={{ opacity: 0, scale: 0.7, rotate: -15 }}
-        animate={{ 
-          opacity: 1, 
-          scale: 1, 
-          rotate: 0 
+        className="
+          absolute
+          w-[80%]
+          h-[80%]
+          rounded-full
+          blur-[120px]
+          bg-gradient-to-br
+          from-[#D4AF37]/20
+          via-[#F4E2B8]/10
+          to-transparent
+        "
+        animate={{
+          opacity: [0.45, 0.7, 0.45],
+          scale: [1, 1.06, 1],
         }}
-        transition={{ 
-          duration: 1.6, 
-          ease: [0.16, 1, 0.3, 1], 
-          delay: 0.3 
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+
+      {/* ✨ SECONDARY SOFT LIGHT */}
+      <div className="
+        absolute
+        inset-0
+        bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_65%)]
+      " />
+
+      {/* 💍 RING POP-UP CONTAINER */}
+      <motion.div
+
+        className="
+          relative
+          w-full
+          h-full
+          max-w-[340px]
+          sm:max-w-[460px]
+          lg:max-w-[560px]
+          aspect-square
+          flex
+          items-center
+          justify-center
+        "
+
+        /* 👇 BELOW BOX */
+        initial={{
+          y: 550,
+          opacity: 0,
+          scale: 0.35,
+          rotate: -20,
+        }}
+
+        /* 👇 POP TO CENTER */
+        animate={{
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+        }}
+
+        transition={{
+          duration: 2.2,
+          delay: 0.15,
+          ease: [0.16, 1, 0.3, 1],
         }}
       >
-        
-        <motion.img
-          src={ringImagePng}
-          alt="Maison Lumière Premium Ring"
-          className="w-full h-full object-contain filter drop-shadow-[0_35px_70px_rgba(253,224,71,0.22)]"
-          style={{ transformOrigin: "center bottom" }}
+
+        {/* ✨ GOLD LIGHT BEHIND RING */}
+        <motion.div
+          className="
+            absolute
+            w-[60%]
+            h-[60%]
+            rounded-full
+            bg-[#D4AF37]/15
+            blur-[80px]
+          "
           animate={{
-            y: [0, -12, 0], 
-            rotate: [0, 2, -2, 0], 
+            opacity: [0.3, 0.6, 0.3],
           }}
           transition={{
-            duration: 5, 
+            duration: 4,
             repeat: Infinity,
             ease: "easeInOut",
           }}
         />
 
-        {/* 🕳️ Realism Shadow under the ring (Adjusted width for larger image) */}
-        <motion.div 
-          className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[65%] h-[15px] bg-black/50 rounded-full blur-md"
-          animate={{
-            scale: [1, 0.88, 1],
-            opacity: [0.6, 0.35, 0.6]
+        {/* 💎 MAIN RING IMAGE */}
+        <motion.img
+          src={ringImagePng}
+          alt="Maison Lumière Premium Ring"
+
+          className="
+            relative
+            z-10
+            w-full
+            h-full
+            object-contain
+            drop-shadow-[0_40px_80px_rgba(212,175,55,0.25)]
+          "
+
+          style={{
+            transformOrigin: "center bottom",
           }}
+
+          /* ✨ FLOATING EFFECT */
+          animate={{
+            y: [0, -12, 0],
+            rotate: [0, 1.2, -1.2, 0],
+          }}
+
           transition={{
             duration: 5,
             repeat: Infinity,
             ease: "easeInOut",
+            delay: 2.1,
           }}
         />
+
+        {/* 🌑 PREMIUM SHADOW */}
+        <motion.div
+          className="
+            absolute
+            bottom-8
+            left-1/2
+            -translate-x-1/2
+            w-[58%]
+            h-[18px]
+            rounded-full
+            bg-black/35
+            blur-xl
+          "
+
+          animate={{
+            scale: [1, 0.82, 1],
+            opacity: [0.45, 0.22, 0.45],
+          }}
+
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2.1,
+          }}
+        />
+
       </motion.div>
     </div>
   );
