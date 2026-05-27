@@ -1079,36 +1079,37 @@ const STONE_GEOMETRIES = {
   })(),
 };
 
+/* --- DIRECT STONE SCALES REDUCED BY 20% FOR MINIMAL LOOK --- */
 const STONE_CONFIGS = {
 
   round: {
-    desktopScale: 0.25,
-    mobileScale: 0.20,
-    yOffset: 1.02,
+    desktopScale: 0.20, // 0.25 se direct kam kiya taaki minimal chota lage
+    mobileScale: 0.16,  
+    yOffset: 1.00,      // Top par alignment stable rakhne ke liye
   },
 
   oval: {
-    desktopScale: 0.24,
-    mobileScale: 0.19,
-    yOffset: 1.04,
+    desktopScale: 0.19, 
+    mobileScale: 0.15,  
+    yOffset: 1.02,
   },
 
   princess: {
-    desktopScale: 0.24,
-    mobileScale: 0.19,
-    yOffset: 0.98,
-  },
-
-  emerald: {
-    desktopScale: 0.24,
-    mobileScale: 0.19,
+    desktopScale: 0.19, 
+    mobileScale: 0.15,  
     yOffset: 0.96,
   },
 
+  emerald: {
+    desktopScale: 0.19, // Emerald ko shuruati 0.29 se bohot sahi chota size diya hai
+    mobileScale: 0.15,  
+    yOffset: 0.94,      // Top crown hooks ke upar bina gap fit hone ke liye
+  },
+
   pear: {
-    desktopScale: 0.22,
-    mobileScale: 0.17,
-    yOffset: 1.05,
+    desktopScale: 0.18, 
+    mobileScale: 0.14,  
+    yOffset: 1.02,
   },
 };
 
@@ -1220,7 +1221,6 @@ function RingModel({
 
   }, [metal, scene]);
 
-  /* --- FIXED VERCEL SCALING FLUCTUATION --- */
   useEffect(() => {
 
     const box =
@@ -1251,11 +1251,11 @@ function RingModel({
         size.z
       );
 
-    // Vercel par responsive sizing ko stable karne ke liye scale factor thodha tight kiya hai
+    // Ring size standard par reset kiya taaki stone proportion me chota dikhe
     const scale =
       isMobile
-        ? 1.35 / maxDim // Pehle 1.45 tha, thodha chota kiya stable rakhne ke liye
-        : 1.70 / maxDim; // Pehle 1.85 tha, browser zoom variations handle karne ke liye chota kiya
+        ? 1.45 / maxDim
+        : 1.85 / maxDim;
 
     scene.scale.setScalar(
       scale
