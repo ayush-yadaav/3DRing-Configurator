@@ -173,35 +173,68 @@ const STONE_GEOMETRIES = {
 //   },
 // };
 
+// const STONE_CONFIGS = {
+//   round: {
+//     desktopScale: 0.22,
+//     mobileScale: 0.18,
+//     yOffset: 0.78,
+//   },
+
+//   oval: {
+//     desktopScale: 0.22,
+//     mobileScale: 0.18,
+//     yOffset: 0.80,
+//   },
+
+//   princess: {
+//     desktopScale: 0.21,
+//     mobileScale: 0.17,
+//     yOffset: 0.76,
+//   },
+
+//   emerald: {
+//     desktopScale: 0.21,
+//     mobileScale: 0.17,
+//     yOffset: 0.74,
+//   },
+
+//   pear: {
+//     desktopScale: 0.20,
+//     mobileScale: 0.16,
+//     yOffset: 0.82,
+//   },
+// };
+
+
 const STONE_CONFIGS = {
   round: {
-    desktopScale: 0.22,
-    mobileScale: 0.18,
-    yOffset: 0.78,
+    desktopScale: 0.12,
+    mobileScale: 0.10,
+    yOffset: 0.34,
   },
 
   oval: {
-    desktopScale: 0.22,
-    mobileScale: 0.18,
-    yOffset: 0.80,
+    desktopScale: 0.12,
+    mobileScale: 0.10,
+    yOffset: 0.34,
   },
 
   princess: {
-    desktopScale: 0.21,
-    mobileScale: 0.17,
-    yOffset: 0.76,
+    desktopScale: 0.11,
+    mobileScale: 0.09,
+    yOffset: 0.33,
   },
 
   emerald: {
-    desktopScale: 0.21,
-    mobileScale: 0.17,
-    yOffset: 0.74,
+    desktopScale: 0.11,
+    mobileScale: 0.09,
+    yOffset: 0.32,
   },
 
   pear: {
-    desktopScale: 0.20,
-    mobileScale: 0.16,
-    yOffset: 0.82,
+    desktopScale: 0.11,
+    mobileScale: 0.09,
+    yOffset: 0.36,
   },
 };
 
@@ -313,46 +346,61 @@ function RingModel({
 
   }, [metal, scene]);
 
+  // useEffect(() => {
+
+  //   const box =
+  //     new THREE.Box3().setFromObject(
+  //       scene
+  //     );
+
+  //   const size =
+  //     new THREE.Vector3();
+
+  //   const center =
+  //     new THREE.Vector3();
+
+  //   box.getSize(size);
+
+  //   box.getCenter(center);
+
+  //   scene.position.set(
+  //     -center.x,
+  //     -center.y - 0.1,
+  //     -center.z
+  //   );
+
+  //   const maxDim =
+  //     Math.max(
+  //       size.x,
+  //       size.y,
+  //       size.z
+  //     );
+
+  //   const scale =
+  // isMobile
+  //   ? 1.55 / maxDim
+  //   : 2.05 / maxDim;
+
+  //   scene.scale.setScalar(
+  //     scale
+  //   );
+
+  // }, [scene, isMobile]);
+
+
   useEffect(() => {
 
-    const box =
-      new THREE.Box3().setFromObject(
-        scene
-      );
+  scene.scale.setScalar(
+    isMobile ? 1.15 : 1.4
+  );
 
-    const size =
-      new THREE.Vector3();
+  scene.position.set(
+    0,
+    -0.55,
+    0
+  );
 
-    const center =
-      new THREE.Vector3();
-
-    box.getSize(size);
-
-    box.getCenter(center);
-
-    scene.position.set(
-      -center.x,
-      -center.y - 0.1,
-      -center.z
-    );
-
-    const maxDim =
-      Math.max(
-        size.x,
-        size.y,
-        size.z
-      );
-
-    const scale =
-  isMobile
-    ? 1.55 / maxDim
-    : 2.05 / maxDim;
-
-    scene.scale.setScalar(
-      scale
-    );
-
-  }, [scene, isMobile]);
+}, [scene, isMobile]);
 
   return (
 
