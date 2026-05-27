@@ -175,33 +175,33 @@ const STONE_GEOMETRIES = {
 
 const STONE_CONFIGS = {
   round: {
-    desktopScale: 0.16,
-    mobileScale: 0.13,
-    yOffset: 0.52,
+    desktopScale: 0.22,
+    mobileScale: 0.18,
+    yOffset: 0.78,
   },
 
   oval: {
-    desktopScale: 0.16,
-    mobileScale: 0.13,
-    yOffset: 0.54,
+    desktopScale: 0.22,
+    mobileScale: 0.18,
+    yOffset: 0.80,
   },
 
   princess: {
-    desktopScale: 0.15,
-    mobileScale: 0.12,
-    yOffset: 0.50,
+    desktopScale: 0.21,
+    mobileScale: 0.17,
+    yOffset: 0.76,
   },
 
   emerald: {
-    desktopScale: 0.15,
-    mobileScale: 0.12,
-    yOffset: 0.48,
+    desktopScale: 0.21,
+    mobileScale: 0.17,
+    yOffset: 0.74,
   },
 
   pear: {
-    desktopScale: 0.15,
-    mobileScale: 0.12,
-    yOffset: 0.56,
+    desktopScale: 0.20,
+    mobileScale: 0.16,
+    yOffset: 0.82,
   },
 };
 
@@ -344,9 +344,9 @@ function RingModel({
       );
 
     const scale =
-      isMobile
-        ? 1.15 / maxDim
-        : 1.45 / maxDim;
+  isMobile
+    ? 1.55 / maxDim
+    : 2.05 / maxDim;
 
     scene.scale.setScalar(
       scale
