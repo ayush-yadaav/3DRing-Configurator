@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import ConfiguratorPanel from "./components/ConfiguratorPanel";
 import CartDrawer from "./components/CartDrawer";
+import Catalog from "./components/Catalog";
 
 const RingViewer = lazy(() => import("./components/RingViewer"));
 const EASE = [0.22, 1, 0.36, 1];
@@ -65,8 +66,9 @@ export default function App() {
                 "18k White Gold",
                 "14k Yellow Gold",
                 "18k Yellow Gold",
-                "Rose Gold",
-                "Platinum",
+                "14k Rose Gold",  // 👈 Ye add karein
+                "18k Rose Gold",
+                // "Rose Gold",,
               ],
             },
 
@@ -305,6 +307,15 @@ lg:h-screen
 
       </section>
 
+      <section className="relative min-h-screen bg-[#050505] overflow-hidden" >
+
+        <Catalog
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          onCartOpen={() => setCartOpen(true)}
+        />
+      </section>
+
 
 
       <CartDrawer
@@ -331,4 +342,5 @@ function LoadingShimmer() {
     </div>
   );
 }
+
 
