@@ -24,3 +24,4 @@ export default function Navbar({ cartItemsCount, onCartOpen, ease }) {
     </motion.header>
   );
 }
+

@@ -358,6 +358,9 @@ import CartDrawer from "./components/CartDrawer";
 import Catalog from "./components/Catalog";
 
 const RingViewer = lazy(() => import("./components/RingViewer"));
+
+
+
 const EASE = [0.22, 1, 0.36, 1];
 
 export default function App() {
@@ -438,6 +441,7 @@ export default function App() {
       />
 
       <Hero product={product} ease={EASE} />
+     
 
       {/* --- LIVE 3D CUSTOMIZER STAGE --- */}
       <section className="relative min-h-screen lg:min-h-0 lg:h-screen bg-[#050505] overflow-hidden flex flex-col justify-center pb-6 lg:pb-0">

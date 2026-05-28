@@ -563,7 +563,7 @@ const METAL_STYLES = {
   "18k White Gold": "bg-[#d1d5db]",
   "14k Yellow Gold": "bg-[#dfba54]",
   "18k Yellow Gold": "bg-[#e1b13c]",
-  "14k Rose Gold": "bg-[#B76E79]",
+  "14k Rose Gold": "bg-[#E0A496]",
   "18k Rose Gold": "bg-[#E0A96D]",
   "Pure Platinum": "bg-[#c4c4c6]",
   "Palladium Gray": "bg-[#bcbcbc]",

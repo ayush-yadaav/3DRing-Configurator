@@ -43,7 +43,7 @@ const METAL_MATERIALS = {
   }),
 
   "14k Rose Gold": new THREE.MeshStandardMaterial({
-    color: "#B76E79",
+    color: "#E0A496",
     metalness: 1,
     roughness: 0.12,
     envMapIntensity: 5,
