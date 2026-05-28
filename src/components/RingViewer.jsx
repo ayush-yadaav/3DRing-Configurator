@@ -211,7 +211,7 @@ export default function RingViewer() {
         }}
         camera={{
           position: [0, 0, 2.2],
-          fov: 45,
+          fov: 35,
         }}
       >
         <color attach="background" args={["#050505"]} />
