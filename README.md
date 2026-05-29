@@ -1,57 +1,160 @@
-# 💍 3D Ring Configurator (Headless WooCommerce Integration)
+# 💍 3D Ring Configurator
 
-A cutting-edge, interactive 3D Product Configurator for rings, built using **React**, **Three.js (React Three Fiber)**, and **Tailwind CSS**. This application allows users to customize jewelry in real-time and seamlessly syncs the customized product configuration directly with a **WooCommerce** headless backend.
+An interactive 3D jewelry customization platform built with React, React Three Fiber, Three.js, Tailwind CSS, and WooCommerce. Users can personalize rings in real-time, preview changes instantly in 3D.
 
-🔗 **[Live Demo Link](https://your-vercel-or-live-app-link.vercel.app)** | 🎥 **[3-Min Walkthrough Video](https://your-loom-or-video-link.com)**
+## 🌐 Live Demo
 
----
-
-## 🚀 Features
-
-- **Interactive 3D Rendering:** Immersive 3D ring model powered by React Three Fiber (R3F) and @react-three/drei.
-- **Real-Time Customization:** Dynamic switching of metal types (Gold, Platinum, Rose Gold), diamond cuts, and ring sizes.
-- **Headless WooCommerce Integration:** Smooth data flow that captures the configured metadata and pushes it into the WooCommerce checkout/cart system.
-- **Modern Responsive UI:** A sleek, minimal customizer dashboard built with Tailwind CSS.
-- **Dockerized Environment:** Production-ready Docker configuration included for seamless deployment and local replication.
+- Demo: https://3-d-ring-configurator-two.vercel.app/
 
 ---
 
-## 🛠️ Tech Stack & Architecture Choices
+## ✨ Key Features
 
-### Frontend & 3D Graphics
-- **React & Vite:** Chosen for blazing-fast build times, instant Hot Module Replacement (HMR), and superior performance over Create React App.
-- **Three.js / React Three Fiber:** Leveraged to handle declarative 3D scene management, realistic material shaders, environment lighting, and glTF/GLB model loading.
-- **Tailwind CSS:** Used to build a clean, floating dashboard overlay for controls without adding heavy UI library overhead.
+### 🎨 Real-Time Ring Customization
+- Change metal colors and finishes
+- Customize diamond/stone options
+- Dynamic material updates without page reloads
+- Instant visual feedback
 
-### Backend Connection
-- **WooCommerce REST API:** Serves as the robust commerce engine, managing product variations, dynamic pricing based on configuration, and cart states securely.
+### 🧊 Interactive 3D Experience
+- Built with React Three Fiber & Three.js
+- GLB/GLTF model support
+- Environment lighting and realistic materials
+- Smooth camera controls and interactions
+
+### 🛒 WooCommerce Integration
+- Headless WooCommerce architecture
+- Add configured products to cart
+- Store custom configuration metadata
+- Ready for e-commerce workflows
+
+### 📱 Responsive Design
+- Mobile-friendly interface
+- Modern UI with Tailwind CSS
+- Optimized layout across devices
 
 ---
 
-## ⚙️ Getting Started Locally
+## 🛠 Tech Stack
 
-Follow these steps to spin up the 3D configurator on your local machine.
+| Category | Technology |
+|-----------|------------|
+| Frontend | React, Vite |
+| 3D Engine | Three.js |
+| React 3D | React Three Fiber |
+| Helpers | @react-three/drei |
+| Styling | Tailwind CSS |
+| Backend | WooCommerce REST API |
+| Deployment | Vercel / Netlify |
+| Models | GLB / GLTF |
 
-### Prerequisites
-- **Node.js** (v18.x or higher)
-- **npm** or **yarn**
+---
 
-### Installation Steps
+## 🏗 Project Structure
 
-1. **Clone the Repository:**
-   ```bash
-   git clone [https://github.com/ayush-yadaav/3DRing-Configurator.git](https://github.com/ayush-yadaav/3DRing-Configurator.git)
-   cd 3DRing-Configurator
-   
-2. **Install Dependencies:**
-    npm install
-   
-3.  **Set Up Environment Variables:**
-     Create a .env file in the root directory and populate your WordPress/WooCommerce credentials:
-    VITE_WOOCOMMERCE_URL=[https://your-woocommerce-store.com](https://your-woocommerce-store.com)
-VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```text
+src/
+├── components/      # Reusable UI & 3D components
+├── pages/           # Application pages
+├── assets/          # Images, models
+├── lib/             # WooCommerce/API logic         
+└── App.jsx
+```
 
-4. Run the Development Server:
-   npm run dev
-   Open http://localhost:5173 in your browser to interact with the 3D configurator.
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+VITE_WOOCOMMERCE_URL=https://your-store.com
+VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxx
+VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxx
+```
+
+> Never commit your WooCommerce credentials to GitHub.
+
+---
+
+## 🚀 Local Development
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ayush-yadaav/3DRing-Configurator.git
+cd 3DRing-Configurator
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 📦 Build for Production
+
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+---
+
+## 🎯 Performance Optimizations
+
+- Lazy loading of 3D assets
+- Optimized GLB model delivery
+- Component-based architecture
+- Vite-powered fast builds
+- Efficient React state management
+
+---
+
+---
+
+## 🔮 Future Improvements
+
+- Multiple ring styles
+- Advanced gemstone customization
+- User accounts & saved designs
+- Wishlist functionality
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+---
+
+
+## 👨‍💻 Author
+
+**Ayush Yadav**
+
+- GitHub: https://github.com/ayush-yadaav
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
