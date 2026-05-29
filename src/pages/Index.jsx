@@ -9,7 +9,6 @@ import Hero from "./Hero";
 import ConfiguratorPanel from "../components/ConfiguratorPanel";
 import CartDrawer from "../components/CartDrawer";
 import Catalog from "./Catalog";
-// import StoryPage from "./StoryPage";
 
 const RingViewer = lazy(() => import("../components/RingViewer"));
 
@@ -22,7 +21,7 @@ export default function Index() {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
-  /* SMOOTH SCROLL (LENIS ENGINE) */
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -73,7 +72,7 @@ export default function Index() {
     loadProducts();
   }, []);
 
-  /* LOCALSTORAGE SYNC */
+ 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("ring-cart")) || [];
     setCartItems(savedCart);
@@ -98,14 +97,14 @@ export default function Index() {
     
     {/* <StoryPage/> */}
 
-      {/* --- LIVE 3D CUSTOMIZER STAGE --- */}
+    
       <section id="ring" className="relative min-h-screen lg:min-h-0 lg:h-screen bg-[#050505] overflow-hidden flex flex-col justify-center pb-6 lg:pb-0">
         <div className="absolute inset-0 bg-[#050505]" />
 
-        {/* Global ambient aura reflection */}
+        
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-yellow-400/5 blur-[150px]" />
 
-        {/* --- MAIN INTERACTION LAYOUT --- */}
+       
         <div
           className="
             relative
@@ -125,7 +124,7 @@ export default function Index() {
           "
         >
           {/* LEFT SIDE — 3D RING CANVAS INTERACTOR */}
-          {/* FIX: h-[42vh] se badal kar perfectly balanced h-[52vh] kiya hai taaki ring badi dikhe */}
+    
           <div
             className="
               relative
@@ -170,7 +169,7 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Vignette effect layer */}
+       
         <div
           className="pointer-events-none absolute inset-0 z-10 hidden md:block"
           style={{
@@ -178,7 +177,7 @@ export default function Index() {
           }}
         />
 
-        {/* MOBILE VIEW — BOTTOM SHEET PANEL CONTAINER */}
+        
         <div
           className="
             lg:hidden
@@ -201,7 +200,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* --- THE BESPOKE CATALOG MARKETPLACE --- */}
+   
       <section className="relative min-h-screen bg-[#050505] overflow-hidden">
         <Catalog
           cartItems={cartItems}
