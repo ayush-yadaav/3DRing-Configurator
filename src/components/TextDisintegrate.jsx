@@ -2,305 +2,571 @@
 
 // export default function TextDisintegrate({ sequence = [], duration = 4000 }) {
 //   const canvasRef = useRef(null);
-//   const currentWordIndex = useRef(0);
+//   const stateRef = useRef({
+//     currentPhraseIndex: 0,
+//     particles: [],
+//     state: "idle",
+//     stateTimer: 0,
+//     isUserHovering: false,
+//     dpr: 1,
+//     mouse: { x: -1000, y: -1000 }
+//   });
 
 //   useEffect(() => {
+//     if (!sequence || sequence.length === 0) return;
+
 //     const canvas = canvasRef.current;
 //     const ctx = canvas.getContext("2d", { willReadFrequently: true });
 //     let animationFrameId;
-//     let particles = [];
-//     let nextWordTimeout;
-//     let isDisintegrating = false;
 
-    
-//     const resizeCanvas = () => {
-//       const isMobile = window.innerWidth < 640;
-//       canvas.width = isMobile ? 340 : 700;
-//       canvas.height = isMobile ? 110 : 180; 
-//     };
-//     resizeCanvas();
+//     const GAP = 2;              
+//     const TRANSITION_DURATION = 140; 
+//     const MOUSE_RADIUS = 180; 
+//     const HOVER_FORCE = 30;   
+
+//     function easeInOutCubic(t) {
+//       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+//     }
 
 //     class Particle {
-//       constructor(x, y, color) {
-//         this.x = Math.random() * canvas.width;
-//         this.y = Math.random() * canvas.height;
-//         this.targetX = x;
-//         this.targetY = y;
-//         this.color = color;
-//         this.size = window.innerWidth < 640 ? 1.3 : 1.6; 
+//       constructor(targetX, targetY, color, dpr) {
+//         this.x = targetX;
+//         this.y = targetY;
+//         this.startX = targetX;
+//         this.startY = targetY;
+//         this.targetX = targetX;
+//         this.targetY = targetY;
         
 //         this.vx = 0;
 //         this.vy = 0;
-//         this.ease = Math.random() * 0.05 + 0.04; 
-//         this.friction = 0.82; 
+        
+//         this.color = color;
+//         this.size = (Math.random() * 1.2 + 1.2) * (dpr * 0.7);
+//         this.returnSpeed = 0.07 + Math.random() * 0.04; 
 //       }
 
-//       update() {
-//         if (isDisintegrating) {
-//           this.vx += (Math.random() - 0.5) * 1.8;
-//           this.vy += (Math.random() - 0.5) * 1.8;
-//           this.vx *= this.friction;
-//           this.vy *= this.friction;
-//           this.x += this.vx;
-//           this.y += this.vy;
-//         } else {
-//           const dx = this.targetX - this.x;
-//           const dy = this.targetY - this.y;
-//           this.vx = dx * this.ease;
-//           this.vy = dy * this.ease;
-//           this.x += this.vx;
-//           this.y += this.vy;
+//       morphTo(newTargetX, newTargetY, newColor, dpr) {
+//         this.startX = this.x;
+//         this.startY = this.y;
+//         this.targetX = newTargetX;
+//         this.targetY = newTargetY;
+//         this.color = newColor;
+
+//         // Dynamic organic dispersion: Radial pattern without rigid boundary hits
+//         const angle = Math.random() * Math.PI * 2;
+//         const blastDistance = (Math.random() * 55 + 25) * dpr; 
+//         this.vx = Math.cos(angle) * blastDistance;
+//         this.vy = Math.sin(angle) * blastDistance;
+//       }
+
+//       update(progress, stateObj) {
+//         if (stateObj.state === "idle") {
+//           let baseTargetX = this.targetX;
+//           let baseTargetY = this.targetY;
+
+//           let mdx = stateObj.mouse.x - this.x;
+//           let mdy = stateObj.mouse.y - this.y;
+//           let dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          
+//           if (dist < MOUSE_RADIUS * stateObj.dpr) {
+//             let force = (MOUSE_RADIUS * stateObj.dpr - dist) / (MOUSE_RADIUS * stateObj.dpr);
+//             let angle = Math.atan2(mdy, mdx);
+            
+//             baseTargetX -= Math.cos(angle) * force * (HOVER_FORCE * stateObj.dpr);
+//             baseTargetY -= Math.sin(angle) * force * (HOVER_FORCE * stateObj.dpr);
+            
+//             stateObj.isUserHovering = true;
+//           }
+
+//           this.x += (baseTargetX - this.x) * this.returnSpeed;
+//           this.y += (baseTargetY - this.y) * this.returnSpeed;
+
+//         } else if (stateObj.state === "transition") {
+//           if (progress < 0.5) {
+//             const t = progress / 0.5; 
+//             const easeOut = 1 - Math.pow(1 - t, 3);
+//             this.x = this.startX + this.vx * easeOut;
+//             this.y = this.startY + this.vy * easeOut;
+//           } else {
+//             const t = (progress - 0.5) / 0.5; 
+//             const easeIn = easeInOutCubic(t); 
+            
+//             const currentExplodedX = this.startX + this.vx;
+//             const currentExplodedY = this.startY + this.vy;
+            
+//             this.x = currentExplodedX + (this.targetX - currentExplodedX) * easeIn;
+//             this.y = currentExplodedY + (this.targetY - currentExplodedY) * easeIn;
+//           }
 //         }
 //       }
 
 //       draw() {
 //         ctx.fillStyle = this.color;
-//         ctx.fillRect(this.x, this.y, this.size, this.size);
+//         ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
 //       }
 //     }
 
-//     function initParticles(data) {
-//       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+//     const createTextPixels = (phrase, dpr) => {
+//       const offCanvas = document.createElement('canvas');
+//       const offCtx = offCanvas.getContext('2d');
+//       offCanvas.width = canvas.width;
+//       offCanvas.height = canvas.height;
+
 //       const isMobile = window.innerWidth < 640;
       
-//       const fontSize = isMobile ? 42 : 72;
-//       const lineHeight = isMobile ? 46 : 78;
+//       // Dynamic Sizing mapping
+//       const baseSize = isMobile ? Math.min(canvas.width * 0.09, 42 * dpr) : 74 * dpr;
       
-//       ctx.textAlign = isMobile ? "center" : "left";
-//       ctx.textBaseline = "top";
-
-//       const startX = isMobile ? canvas.width / 2 : 0;
-
+//       // FIX 1: Text coordinates ko left edge se thoda shift kiya hai taaki particles left me safely blast ho sakein
+//       const startX = isMobile ? canvas.width * 0.08 : 120 * dpr;
+//       const startY = isMobile ? canvas.height * 0.18 : 45 * dpr;
       
-//       ctx.font = `300 ${fontSize}px sans-serif`;
-//       ctx.fillStyle = "#ffffff";
-//       ctx.fillText(data.line1, startX, 0);
+//       offCtx.fillStyle = "#ffffff";
+//       offCtx.font = `700 ${baseSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+//       offCtx.textBaseline = "top";
+//       offCtx.fillText(phrase.line1, startX, startY);
 
-     
-//       ctx.font = `300 italic ${fontSize}px sans-serif`;
-//       ctx.fillStyle = "#facc15"; 
-//       ctx.fillText(data.line2, startX, lineHeight);
+//       offCtx.fillStyle = "#FFC107";
+//       offCtx.font = `italic 700 ${baseSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+//       offCtx.fillText(phrase.line2, startX, startY + baseSize * 1.18);
 
-//       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+//       const imgData = offCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+//       const targets = [];
 
-//       particles = [];
-//       const gap = 2; 
-
-//       for (let y = 0; y < canvas.height; y += gap) {
-//         for (let x = 0; x < canvas.width; x += gap) {
-//           const index = (y * canvas.width + x) * 4;
-//           const alpha = imgData.data[index + 3];
-
-//           if (alpha > 120) {
-//             const r = imgData.data[index];
-//             const g = imgData.data[index + 1];
-//             const b = imgData.data[index + 2];
-//             const hexColor = r > 200 && g > 200 && b < 100 ? "#facc15" : "#ffffff";
-
-//             particles.push(new Particle(x, y, hexColor));
+//       for (let y = 0; y < canvas.height; y += GAP * dpr) {
+//         for (let x = 0; x < canvas.width; x += GAP * dpr) {
+//           const i = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
+//           if (imgData[i + 3] > 128) {
+//             targets.push({
+//               x: x,
+//               y: y,
+//               color: `rgba(${imgData[i]}, ${imgData[i+1]}, ${imgData[i+2]}, ${imgData[i+3]/255})`
+//             });
 //           }
 //         }
 //       }
-//     }
-
-//     function animate() {
-//       ctx.clearRect(0, 0, canvas.width, canvas.height);
-//       for (let i = 0; i < particles.length; i++) {
-//         particles[i].update();
-//         particles[i].draw();
-//       }
-//       animationFrameId = requestAnimationFrame(animate);
-//     }
-
-//     initParticles(sequence[currentWordIndex.current]);
-//     animate();
-
-//     const cycleText = () => {
-//       isDisintegrating = true;
-//       setTimeout(() => {
-//         currentWordIndex.current = (currentWordIndex.current + 1) % sequence.length;
-//         initParticles(sequence[currentWordIndex.current]);
-//         isDisintegrating = false;
-//         nextWordTimeout = setTimeout(cycleText, duration);
-//       }, 1000);
+//       return targets;
 //     };
 
-//     nextWordTimeout = setTimeout(cycleText, duration);
-//     window.addEventListener("resize", resizeCanvas);
+//     const initPhrase = () => {
+//       const stateObj = stateRef.current;
+//       const currentPhrase = sequence[stateObj.currentPhraseIndex];
+//       if (!currentPhrase) return;
+
+//       const targets = createTextPixels(currentPhrase, stateObj.dpr);
+//       const updatedParticles = [];
+
+//       for (let i = 0; i < targets.length; i++) {
+//         if (i < stateObj.particles.length) {
+//           let p = stateObj.particles[i];
+//           p.morphTo(targets[i].x, targets[i].y, targets[i].color, stateObj.dpr);
+//           updatedParticles.push(p);
+//         } else {
+//           let srcX = targets[i].x;
+//           let srcY = targets[i].y;
+//           if (stateObj.particles.length > 0) {
+//             const randomParent = stateObj.particles[Math.floor(Math.random() * stateObj.particles.length)];
+//             srcX = randomParent.x;
+//             srcY = randomParent.y;
+//           }
+//           let newP = new Particle(srcX, srcY, targets[i].color, stateObj.dpr);
+//           newP.morphTo(targets[i].x, targets[i].y, targets[i].color, stateObj.dpr);
+//           updatedParticles.push(newP);
+//         }
+//       }
+//       stateObj.particles = updatedParticles;
+//     };
+
+//     const resizeAndScaleCanvas = () => {
+//       const stateObj = stateRef.current;
+//       stateObj.dpr = window.devicePixelRatio || 1;
+      
+//       const isMobile = window.innerWidth < 640;
+      
+//       // FIX 2: Canvas width ko badha kar full resolution container layout space de diya hai
+//       const width = isMobile ? window.innerWidth * 0.95 : 1000;
+//       const height = isMobile ? 220 : 300;
+
+//       canvas.width = width * stateObj.dpr;
+//       canvas.height = height * stateObj.dpr;
+//       canvas.style.width = width + 'px';
+//       canvas.style.height = height + 'px';
+
+//       stateObj.particles = [];
+//       initPhrase();
+//     };
+
+//     const animate = () => {
+//       const stateObj = stateRef.current;
+//       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+//       stateObj.isUserHovering = false;
+
+//       let progress = 0;
+//       if (stateObj.state === "transition") {
+//         progress = stateObj.stateTimer / TRANSITION_DURATION;
+//       }
+
+//       for (let i = 0; i < stateObj.particles.length; i++) {
+//         stateObj.particles[i].update(progress, stateObj);
+//         stateObj.particles[i].draw();
+//       }
+
+//       if (stateObj.state === "idle") {
+//         if (!stateObj.isUserHovering) {
+//           stateObj.stateTimer++;
+//           const maxIdleFrames = (duration / 1000) * 60; 
+          
+//           if (stateObj.stateTimer > maxIdleFrames) {
+//             stateObj.currentPhraseIndex = (stateObj.currentPhraseIndex + 1) % sequence.length;
+//             initPhrase();
+//             stateObj.state = "transition";
+//             stateObj.stateTimer = 0;
+//           }
+//         } else {
+//           if (stateObj.stateTimer > 0) stateObj.stateTimer -= 2;
+//         }
+//       } else if (stateObj.state === "transition") {
+//         stateObj.stateTimer++;
+//         if (progress >= 1) {
+//           stateObj.state = "idle";
+//           stateObj.stateTimer = 0;
+//         }
+//       }
+
+//       animationFrameId = requestAnimationFrame(animate);
+//     };
+
+//     const handleMouseMove = (e) => {
+//       const rect = canvas.getBoundingClientRect();
+//       const stateObj = stateRef.current;
+//       stateObj.mouse.x = (e.clientX - rect.left) * stateObj.dpr;
+//       stateObj.mouse.y = (e.clientY - rect.top) * stateObj.dpr;
+//     };
+
+//     const handleMouseLeave = () => {
+//       const stateObj = stateRef.current;
+//       stateObj.mouse.x = -1000;
+//       stateObj.mouse.y = -1000;
+//     };
+
+//     const handleResize = () => {
+//       cancelAnimationFrame(animationFrameId);
+//       resizeAndScaleCanvas();
+//       animate();
+//     };
+
+//     window.addEventListener('resize', handleResize);
+//     canvas.addEventListener('mousemove', handleMouseMove);
+//     canvas.addEventListener('mouseleave', handleMouseLeave);
+
+//     resizeAndScaleCanvas();
+//     animate();
 
 //     return () => {
 //       cancelAnimationFrame(animationFrameId);
-//       clearTimeout(nextWordTimeout);
-//       window.removeEventListener("resize", resizeCanvas);
+//       window.removeEventListener('resize', handleResize);
+//       if (canvas) {
+//         canvas.removeEventListener('mousemove', handleMouseMove);
+//         canvas.removeEventListener('mouseleave', handleMouseLeave);
+//       }
 //     };
 //   }, [sequence, duration]);
 
-//   return <canvas ref={canvasRef} className="block mx-auto lg:mx-0 max-w-full" />;
+//   return (
+//     <canvas 
+//       ref={canvasRef} 
+//       className="block mx-auto lg:mx-0 max-w-none cursor-default pointer-events-auto"
+//       style={{ background: "transparent" }}
+//     />
+//   );
 // }
 
 import React, { useEffect, useRef } from "react";
 
 export default function TextDisintegrate({ sequence = [], duration = 4000 }) {
   const canvasRef = useRef(null);
-  const currentWordIndex = useRef(0);
+  const containerRef = useRef(null); // Parent size track karne ke liye
+  const stateRef = useRef({
+    currentPhraseIndex: 0,
+    particles: [],
+    state: "idle",
+    stateTimer: 0,
+    isUserHovering: false,
+    dpr: 1,
+    mouse: { x: -1000, y: -1000 }
+  });
 
   useEffect(() => {
+    if (!sequence || sequence.length === 0) return;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     let animationFrameId;
-    let particles = [];
-    let nextWordTimeout;
-    let isDisintegrating = false;
 
-    const resizeCanvas = () => {
-      const isMobile = window.innerWidth < 640;
-      canvas.width = isMobile ? 360 : 750;
-      canvas.height = isMobile ? 140 : 225;
-    };
-    resizeCanvas();
+    const GAP = 2;              
+    const TRANSITION_DURATION = 140; 
+    const MOUSE_RADIUS = 180; 
+    const HOVER_FORCE = 30;   
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
 
     class Particle {
-      // FIX: constructor me ab targetX aur targetY hi iski shuruati (x, y) position banegi
-      constructor(x, y, color) {
-        this.x = x; 
-        this.y = y;
-        this.targetX = x;
-        this.targetY = y;
-        this.color = color;
-        this.size = window.innerWidth < 640 ? 1.3 : 1.6; 
+      constructor(targetX, targetY, color, dpr) {
+        this.x = targetX;
+        this.y = targetY;
+        this.startX = targetX;
+        this.startY = targetY;
+        this.targetX = targetX;
+        this.targetY = targetY;
         
         this.vx = 0;
         this.vy = 0;
-        this.ease = Math.random() * 0.06 + 0.05; // Thoda fast ease smooth transitions ke liye
-        this.friction = 0.85; 
+        
+        this.color = color;
+        this.size = (Math.random() * 1.2 + 1.2) * (dpr * 0.7);
+        this.returnSpeed = 0.07 + Math.random() * 0.04; 
       }
 
-      update() {
-        if (isDisintegrating) {
-          // Disintegration ke waqt particles bikhrenge
-          this.vx += (Math.random() - 0.5) * 2;
-          this.vy += (Math.random() - 0.5) * 2;
-          this.vx *= this.friction;
-          this.vy *= this.friction;
-          this.x += this.vx;
-          this.y += this.vy;
-        } else {
-          // Integration ke waqt particles aaram se naye target par baithenge
-          const dx = this.targetX - this.x;
-          const dy = this.targetY - this.y;
-          this.vx = dx * this.ease;
-          this.vy = dy * this.ease;
-          this.x += this.vx;
-          this.y += this.vy;
+      morphTo(newTargetX, newTargetY, newColor, dpr) {
+        this.startX = this.x;
+        this.startY = this.y;
+        this.targetX = newTargetX;
+        this.targetY = newTargetY;
+        this.color = newColor;
+
+        const angle = Math.random() * Math.PI * 2;
+        // Moderate blast force taaki edge collision na ho
+        const blastDistance = (Math.random() * 40 + 20) * dpr; 
+        this.vx = Math.cos(angle) * blastDistance;
+        this.vy = Math.sin(angle) * blastDistance;
+      }
+
+      update(progress, stateObj) {
+        if (stateObj.state === "idle") {
+          let baseTargetX = this.targetX;
+          let baseTargetY = this.targetY;
+
+          let mdx = stateObj.mouse.x - this.x;
+          let mdy = stateObj.mouse.y - this.y;
+          let dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          
+          if (dist < MOUSE_RADIUS * stateObj.dpr) {
+            let force = (MOUSE_RADIUS * stateObj.dpr - dist) / (MOUSE_RADIUS * stateObj.dpr);
+            let angle = Math.atan2(mdy, mdx);
+            
+            baseTargetX -= Math.cos(angle) * force * (HOVER_FORCE * stateObj.dpr);
+            baseTargetY -= Math.sin(angle) * force * (HOVER_FORCE * stateObj.dpr);
+            
+            stateObj.isUserHovering = true;
+          }
+
+          this.x += (baseTargetX - this.x) * this.returnSpeed;
+          this.y += (baseTargetY - this.y) * this.returnSpeed;
+
+        } else if (stateObj.state === "transition") {
+          if (progress < 0.5) {
+            const t = progress / 0.5; 
+            const easeOut = 1 - Math.pow(1 - t, 3);
+            this.x = this.startX + this.vx * easeOut;
+            this.y = this.startY + this.vy * easeOut;
+          } else {
+            const t = (progress - 0.5) / 0.5; 
+            const easeIn = easeInOutCubic(t); 
+            
+            const currentExplodedX = this.startX + this.vx;
+            const currentExplodedY = this.startY + this.vy;
+            
+            this.x = currentExplodedX + (this.targetX - currentExplodedX) * easeIn;
+            this.y = currentExplodedY + (this.targetY - currentExplodedY) * easeIn;
+          }
         }
       }
 
       draw() {
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
       }
     }
 
-    function initParticles(data) {
-      // Purane particles ki current location save kar lete hain taaki naye text ke particles wahin se shuru hon
-      const oldParticles = [...particles];
+    const createTextPixels = (phrase, dpr) => {
+      const offCanvas = document.createElement('canvas');
+      const offCtx = offCanvas.getContext('2d');
+      offCanvas.width = canvas.width;
+      offCanvas.height = canvas.height;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
       const isMobile = window.innerWidth < 640;
-      const fontSize = isMobile ? 42 : 72;
-      const lineHeight = isMobile ? 50 : 85;
       
-      ctx.textAlign = isMobile ? "center" : "left";
-      ctx.textBaseline = "top";
+      // Dynamic responsive typography base scaling
+      const baseSize = isMobile ? Math.min(canvas.width * 0.11, 44 * dpr) : 74 * dpr;
+      
+      // FIX: Text ko perfect dynamic padding standard diya taaki text na kate aur blast safely execute ho
+      const startX = isMobile ? canvas.width * 0.08 : 40 * dpr;
+      const startY = isMobile ? canvas.height * 0.18 : 45 * dpr;
+      
+      offCtx.fillStyle = "#ffffff";
+      offCtx.font = `700 ${baseSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      offCtx.textBaseline = "top";
+      offCtx.fillText(phrase.line1, startX, startY);
 
-      const startX = isMobile ? canvas.width / 2 : 20; 
-      const startY = 15;
+      offCtx.fillStyle = "#FFC107";
+      offCtx.font = `italic 700 ${baseSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+      offCtx.fillText(phrase.line2, startX, startY + baseSize * 1.18);
 
-      ctx.font = `300 ${fontSize}px sans-serif`;
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(data.line1, startX, startY);
+      const imgData = offCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const targets = [];
 
-      ctx.font = `300 italic ${fontSize}px sans-serif`;
-      ctx.fillStyle = "#facc15"; 
-      ctx.fillText(data.line2, startX, startY + lineHeight);
-
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles = [];
-      const gap = 2; 
-      let pIndex = 0;
-
-      for (let y = 0; y < canvas.height; y += gap) {
-        for (let x = 0; x < canvas.width; x += gap) {
-          const index = (y * canvas.width + x) * 4;
-          const alpha = imgData.data[index + 3];
-
-          if (alpha > 120) {
-            const r = imgData.data[index];
-            const g = imgData.data[index + 1];
-            const b = imgData.data[index + 2];
-            const hexColor = r > 200 && g > 200 && b < 100 ? "#facc15" : "#ffffff";
-
-            const p = new Particle(x, y, hexColor);
-            
-            // FIX MAGIC: Agar purana particle available hai, toh naye particle ko uski last coordinate se shuru karo
-            if (oldParticles[pIndex]) {
-              p.x = oldParticles[pIndex].x;
-              p.y = oldParticles[pIndex].y;
-            } else if (oldParticles.length > 0) {
-              // Agar naye text me jyada particles hain, toh kisi random purane particle ki jagah se shuru karo
-              const randomOld = oldParticles[Math.floor(Math.random() * oldParticles.length)];
-              p.x = randomOld.x;
-              p.y = randomOld.y;
-            }
-            
-            particles.push(p);
-            pIndex++;
+      for (let y = 0; y < canvas.height; y += GAP * dpr) {
+        for (let x = 0; x < canvas.width; x += GAP * dpr) {
+          const i = (Math.floor(y) * canvas.width + Math.floor(x)) * 4;
+          if (imgData[i + 3] > 128) {
+            targets.push({
+              x: x,
+              y: y,
+              color: `rgba(${imgData[i]}, ${imgData[i+1]}, ${imgData[i+2]}, ${imgData[i+3]/255})`
+            });
           }
         }
       }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw();
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    }
-
-    initParticles(sequence[currentWordIndex.current]);
-    animate();
-
-    const cycleText = () => {
-      isDisintegrating = true;
-      
-      // 1 second tak text disintegrate (bikhrega)
-      setTimeout(() => {
-        currentWordIndex.current = (currentWordIndex.current + 1) % sequence.length;
-        
-        // Naye word ke particles banenge jo purani bikhri hui position se hi start honge
-        initParticles(sequence[currentWordIndex.current]);
-        isDisintegrating = false; // Ab particles seamlessly naye target standard par integrate honge
-        
-        nextWordTimeout = setTimeout(cycleText, duration);
-      }, 1000);
+      return targets;
     };
 
-    nextWordTimeout = setTimeout(cycleText, duration);
-    window.addEventListener("resize", resizeCanvas);
+    const initPhrase = () => {
+      const stateObj = stateRef.current;
+      const currentPhrase = sequence[stateObj.currentPhraseIndex];
+      if (!currentPhrase) return;
+
+      const targets = createTextPixels(currentPhrase, stateObj.dpr);
+      const updatedParticles = [];
+
+      for (let i = 0; i < targets.length; i++) {
+        if (i < stateObj.particles.length) {
+          let p = stateObj.particles[i];
+          p.morphTo(targets[i].x, targets[i].y, targets[i].color, stateObj.dpr);
+          updatedParticles.push(p);
+        } else {
+          let srcX = targets[i].x;
+          let srcY = targets[i].y;
+          if (stateObj.particles.length > 0) {
+            const randomParent = stateObj.particles[Math.floor(Math.random() * stateObj.particles.length)];
+            srcX = randomParent.x;
+            srcY = randomParent.y;
+          }
+          let newP = new Particle(srcX, srcY, targets[i].color, stateObj.dpr);
+          newP.morphTo(targets[i].x, targets[i].y, targets[i].color, stateObj.dpr);
+          updatedParticles.push(newP);
+        }
+      }
+      stateObj.particles = updatedParticles;
+    };
+
+    const resizeAndScaleCanvas = () => {
+      const stateObj = stateRef.current;
+      stateObj.dpr = window.devicePixelRatio || 1;
+      
+      // Parent wrapper ka active container pixel size calculate kar rhe hain
+      const parentWidth = containerRef.current ? containerRef.current.clientWidth : window.innerWidth;
+      const isMobile = window.innerWidth < 640;
+      
+      // Flexible boundaries layout ratio tracking
+      const width = isMobile ? window.innerWidth * 0.95 : Math.min(parentWidth, 720);
+      const height = isMobile ? 200 : 260;
+
+      canvas.width = width * stateObj.dpr;
+      canvas.height = height * stateObj.dpr;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+
+      stateObj.particles = [];
+      initPhrase();
+    };
+
+    const animate = () => {
+      const stateObj = stateRef.current;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      stateObj.isUserHovering = false;
+
+      let progress = 0;
+      if (stateObj.state === "transition") {
+        progress = stateObj.stateTimer / TRANSITION_DURATION;
+      }
+
+      for (let i = 0; i < stateObj.particles.length; i++) {
+        stateObj.particles[i].update(progress, stateObj);
+        stateObj.particles[i].draw();
+      }
+
+      if (stateObj.state === "idle") {
+        if (!stateObj.isUserHovering) {
+          stateObj.stateTimer++;
+          const maxIdleFrames = (duration / 1000) * 60; 
+          
+          if (stateObj.stateTimer > maxIdleFrames) {
+            stateObj.currentPhraseIndex = (stateObj.currentPhraseIndex + 1) % sequence.length;
+            initPhrase();
+            stateObj.state = "transition";
+            stateObj.stateTimer = 0;
+          }
+        } else {
+          if (stateObj.stateTimer > 0) stateObj.stateTimer -= 2;
+        }
+      } else if (stateObj.state === "transition") {
+        stateObj.stateTimer++;
+        if (progress >= 1) {
+          stateObj.state = "idle";
+          stateObj.stateTimer = 0;
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const stateObj = stateRef.current;
+      stateObj.mouse.x = (e.clientX - rect.left) * stateObj.dpr;
+      stateObj.mouse.y = (e.clientY - rect.top) * stateObj.dpr;
+    };
+
+    const handleMouseLeave = () => {
+      const stateObj = stateRef.current;
+      stateObj.mouse.x = -1000;
+      stateObj.mouse.y = -1000;
+    };
+
+    const handleResize = () => {
+      cancelAnimationFrame(animationFrameId);
+      resizeAndScaleCanvas();
+      animate();
+    };
+
+    window.addEventListener('resize', handleResize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    resizeAndScaleCanvas();
+    animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      clearTimeout(nextWordTimeout);
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener('resize', handleResize);
+      if (canvas) {
+        canvas.removeEventListener('mousemove', handleMouseMove);
+        canvas.removeEventListener('mouseleave', handleMouseLeave);
+      }
     };
   }, [sequence, duration]);
 
-  return <canvas ref={canvasRef} className="block mx-auto lg:mx-0 max-w-full" />;
+  return (
+    <div ref={containerRef} className="w-full flex justify-center lg:justify-start overflow-visible">
+      <canvas 
+        ref={canvasRef} 
+        className="block max-w-full cursor-default pointer-events-auto"
+        style={{ background: "transparent" }}
+      />
+    </div>
+  );
 }
