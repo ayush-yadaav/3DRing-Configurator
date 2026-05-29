@@ -69,11 +69,9 @@ Create a `.env` file in the project root:
 
 ```env
 VITE_WOOCOMMERCE_URL=https://your-store.com
-VITE_WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxx
-VITE_WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxx
+VITE_NAME=xxxxxxxxxxxxxxxxx
+VITE_PASSWORD=xxxxxxxxxxxxxxxxx
 ```
-
-> Never commit your WooCommerce credentials to GitHub.
 
 ---
 
