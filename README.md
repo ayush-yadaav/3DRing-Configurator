@@ -23,7 +23,6 @@ An interactive 3D jewelry customization platform built with React, React Three F
 - Smooth camera controls and interactions
 
 ### 📱 Responsive Design
-- Mobile-friendly interface
 - Modern UI with Tailwind CSS
 - Optimized layout across devices
 
