@@ -95,7 +95,7 @@ export default function Index() {
 
       <Hero product={product} ease={EASE} />
     
-    {/* <StoryPage/> */}
+  
 
     
       <section id="ring" className="relative min-h-screen lg:min-h-0 lg:h-screen bg-[#050505] overflow-hidden flex flex-col justify-center pb-6 lg:pb-0">
