@@ -54,7 +54,6 @@ export default function HeroRingViewer() {
             w-full
             h-full
             object-contain
-            drop-shadow-[0_40px_80px_rgba(212,175,55,0.25)]
           "
           style={{
             transformOrigin: "center bottom",

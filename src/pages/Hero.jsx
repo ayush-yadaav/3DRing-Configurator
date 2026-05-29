@@ -75,3 +75,4 @@ export default function Hero({ product, ease }) {
     </section>
   );
 }
+
