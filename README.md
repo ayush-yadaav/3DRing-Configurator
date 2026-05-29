@@ -22,12 +22,6 @@ An interactive 3D jewelry customization platform built with React, React Three F
 - Environment lighting and realistic materials
 - Smooth camera controls and interactions
 
-### 🛒 WooCommerce Integration
-- Headless WooCommerce architecture
-- Add configured products to cart
-- Store custom configuration metadata
-- Ready for e-commerce workflows
-
 ### 📱 Responsive Design
 - Mobile-friendly interface
 - Modern UI with Tailwind CSS
@@ -49,6 +43,22 @@ An interactive 3D jewelry customization platform built with React, React Three F
 | Models | GLB / GLTF |
 
 ---
+
+## ⚠️ Deployment Status
+
+The WooCommerce backend is currently running in a local development environment and is not publicly hosted.
+
+The frontend successfully communicates with the local WooCommerce instance through the WooCommerce REST API and retrieves product information.
+
+Due to hosting constraints during development, the backend could not be deployed to a public server for the final submission.
+
+Current Status:
+- ✅ WooCommerce product data fetching
+- ✅ REST API integration
+- ✅ Real-time 3D customization
+- ✅ Local cart implementation
+- ❌ Public WooCommerce deployment
+- ❌ WooCommerce cart synchronization
 
 ## 🏗 Project Structure
 
